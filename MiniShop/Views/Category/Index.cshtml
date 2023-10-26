@@ -1,0 +1,46 @@
+﻿@using MiniShop.Models.Entity;
+@model List<Category>
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-6">
+            <h2>Category List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Category" asp-action="Create" class="btn bg-primary text-light">
+                <i class="bi bi-plus-circle-dotted"></i> New Category
+            </a>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Modified Date</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model)
+                {
+                    <tr>
+                        <td>@obj.Name</td>
+                        <td>@obj.Description</td>
+                        <td>@obj.ModifiedDate</td>
+                        <td>
+                            <div class="row" role="group">
+                                <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.CategoryId" class="btn btn-primary">
+                                    Edit
+                                </a>
+                                <a asp-controller="Category" asp-action="Delete" asp-route-id="@obj.CategoryId" class="btn btn-danger">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
