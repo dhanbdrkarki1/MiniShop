@@ -2,7 +2,7 @@
 using MiniShop.Models.Entity;
 using System;
 
-namespace MiniShop.Data
+namespace MiniShop.DataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {

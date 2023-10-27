@@ -1,22 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MiniShop.Data;
+using MiniShop.DataAccess.Data;
+using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
 using System;
 
-namespace MiniShop.Controllers
+namespace MiniShop.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         //DEPENDENCY INJECTION
-        private readonly ApplicationDbContext _db;
-        public CategoryController(ApplicationDbContext db)
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            List<Category> categories = _db.Categories.ToList();
+            List<Category> categories = _unitOfWork.Category.GetAll().ToList();
 
             return View(categories);
         }
@@ -32,8 +34,8 @@ namespace MiniShop.Controllers
             if (ModelState.IsValid)
             {
                 category.ModifiedDate = DateTime.Now;
-                _db.Categories.Add(category);
-                _db.SaveChanges();
+                _unitOfWork.Category.Add(category);
+                _unitOfWork.Save();
                 TempData["success"] = "New category created successfully.";
                 return RedirectToAction("Index");
             }
@@ -48,7 +50,7 @@ namespace MiniShop.Controllers
                 return NotFound();
             }
 
-            Category? category = _db.Categories.Find(id);
+            Category? category = _unitOfWork.Category.Get(u => u.CategoryId == id);
 
             if (category == null)
             {
@@ -64,8 +66,9 @@ namespace MiniShop.Controllers
             if (ModelState.IsValid)
             {
                 category.ModifiedDate = DateTime.Now;
-                _db.Categories.Update(category);
-                _db.SaveChanges();
+                _unitOfWork.Category.Update(category);
+                _unitOfWork.Save();
+                TempData["success"] = "Category " + category.Name + " has been updated successfully.";
                 return RedirectToAction("Index");
             }
 
@@ -79,7 +82,7 @@ namespace MiniShop.Controllers
                 return NotFound();
             }
 
-            Category? category = _db.Categories.Find(id);
+            Category? category = _unitOfWork.Category.Get(u => u.CategoryId == id);
 
             if (category == null)
             {
@@ -87,8 +90,8 @@ namespace MiniShop.Controllers
             }
             else
             {
-                _db.Categories.Remove(category);
-                _db.SaveChanges();
+                _unitOfWork.Category.Remove(category);
+                _unitOfWork.Save();
                 TempData["success"] = "Category " + category.Name + " has been deleted successfully.";
                 return RedirectToAction("Index");
 

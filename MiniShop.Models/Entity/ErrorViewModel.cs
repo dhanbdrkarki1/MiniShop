@@ -1,4 +1,4 @@
-namespace MiniShop.Models
+namespace MiniShop.Models.Entity
 {
     public class ErrorViewModel
     {
