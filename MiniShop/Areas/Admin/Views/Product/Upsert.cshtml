@@ -1,0 +1,80 @@
+﻿@using MiniShop.Models.Entity;
+@model ProductVM;
+
+
+<form method="post" enctype="multipart/form-data">
+    <input asp-for="Product.ProductId" hidden/>
+    <input asp-for="Product.ImageURL" hidden />
+    <div class="container">
+        <div class="row mb-3">
+            <h2>@(Model.Product.ProductId != 0 ? "Update" : "Create New") Product</h2>
+        </div>
+        <div class="row">
+            <div class="col-10">
+                <div class="row">
+                    <label asp-for="Product.Name"></label>
+                    <input asp-for="Product.Name" class="form-control" />
+                    <span asp-validation-for="Product.Name" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <label asp-for="@Model.Product.CategoryId"></label>
+                    <select asp-for="@Model.Product.CategoryId" asp-items="@Model.CategoryList" class="form-control">
+                        <option disabled selected>--Select Category--</option>
+                    </select>
+                    <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <label asp-for="Product.Description"></label>
+                    <textarea asp-for="Product.Description" class="form-control"></textarea>
+                    <span asp-validation-for="Product.Description" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <label asp-for="Product.Price"></label>
+                    <input asp-for="Product.Price" class="form-control" />
+                    <span asp-validation-for="Product.Price" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <label asp-for="Product.StockQuantity"></label>
+                    <input asp-for="Product.StockQuantity" class="form-control" />
+                    <span asp-validation-for="Product.StockQuantity" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <label asp-for="Product.ImageURL"></label>
+                    <input type="file" name="file" class="form-control" />
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <button type="submit" class="btn form-control btn-primary">
+                            @(Model.Product.ProductId != 0 ? "Update" : "Create") Product
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <a asp-controller="Product" asp-action="Index" class="btn btn-secondary form-control">
+                            Return to Product List
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <img src="@Model.Product.ImageURL" width="100%"
+                 style="border-radius:5px; border:1px solid #bbb9b9" />
+            </div>
+        </div>
+
+    </div>
+</form>
+
+@section Scripts{
+     <script>
+            tinymce.init({
+                selector: 'textarea',
+                plugins: 'mentions anchor autolink charmap codesample emoticons image link lists table visualblocks wordcount',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link table | align lineheight | tinycomments | checklist numlist bullist indent outdent',
+            });
+    </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
