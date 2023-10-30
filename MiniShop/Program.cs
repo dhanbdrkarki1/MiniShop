@@ -3,6 +3,7 @@ using MiniShop.DataAccess.Data;
 using MiniShop.DataAccess.Repository;
 using MiniShop.DataAccess.Repository.IRepository;
 using System;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(
     opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("AppConn")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
@@ -27,6 +31,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 
