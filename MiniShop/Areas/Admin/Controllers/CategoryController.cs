@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniShop.DataAccess.Data;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
+using MiniShop.Utility;
 using System;
 
 namespace MiniShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CategoryController : Controller
     {
         //DEPENDENCY INJECTION

@@ -1,14 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MiniShop.DataAccess.Data;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
 using MiniShop.Models.ViewModels;
+using MiniShop.Utility;
 using System;
+using System.Data;
 
 namespace MiniShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         //DEPENDENCY INJECTION
