@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace MiniShop.Areas.Customer.Controllers
 {
@@ -25,10 +27,43 @@ namespace MiniShop.Areas.Customer.Controllers
 
 		public IActionResult Details(int productId)
 		{
-			Product product = _unitOfWork.Product.Get(u => u.ProductId == productId, includeProperties: "Category");
+            ShoppingCart cart = new()
+            {
+                Product = _unitOfWork.Product.Get(u => u.ProductId == productId, includeProperties: "Category"),
+                Quantity = 1,
+                ProductId = productId
 
-			return View(product);
+            };
+
+			return View(cart);
 		}
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+			shoppingCart.ApplicationUserId = userId;
+
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
+            if (cartFromDb != null)
+            {
+                // update cart if product in cart exist
+                cartFromDb.Quantity += shoppingCart.Quantity;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+                TempData["success"] = "Product updated in a cart successfully";
+            }
+            else
+            {
+                // add product to cart
+            _unitOfWork.ShoppingCart.Add(shoppingCart);
+				TempData["success"] = "Product added to cart successfully";
+			}
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
+        }
+
 
 		public IActionResult Privacy()
         {

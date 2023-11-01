@@ -1,0 +1,105 @@
+﻿@model ShoppingCartVM
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary text-uppercase mb-2 btn-sm"><small>Continue Shopping</small></a>
+        </div>
+    </div>
+    @if (!Model.IsCartEmpty)
+    {
+        <div class="row">
+            <div class="col-md-12 ftco-animate">
+                <div class="cart-list">
+                    <table class="table">
+                        <thead class="thead-primary">
+                            <tr class="text-center">
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ShoppingCartList)
+                            {
+                                <input asp-for="@item.ShoppingCartId" hidden />
+                                <tr class="text-center">
+                                    <td class="product-remove">
+                                        <a asp-area="Customer" asp-action="Remove" asp-route-cartId="@item.ShoppingCartId"><span class="ion-ios-close"></span></a>
+                                    </td>
+
+                                    <td class="image-prod"><div class="img" style="background-image:url(@item.Product.ImageURL);"></div></td>
+
+                                    <td class="product-name">
+                                        <h3>@item.Product.Name</h3>
+                                        <p>@Html.Raw(item.Product.Description)</p>
+                                    </td>
+
+                                    <td class="price">@item.Product.Price.ToString("c")</td>
+
+                                    <td class="quantity">
+
+                                        <div class="input-group input-group-sm mb-6">
+                                            <span class="input-group-btn mr-2">
+                                                <a asp-area="Customer" asp-action="Minus" asp-route-cartId="@item.ShoppingCartId" class="btn btn-outline-info pt-3 ">
+                                                    <i class="ion-ios-remove"></i>
+                                                </a>
+                                            </span>
+                                            <input type="text" name="quantity" class="quantity form-control input-number text-center" value="@item.Quantity" disabled>
+                                            <span class="input-group-btn ml-2">
+                                                <a asp-area="Customer" asp-controller="Cart" asp-action="Plus" asp-route-cartId="@item.ShoppingCartId" class="btn btn-outline-info pt-3">
+                                                    <i class="ion-ios-add"></i>
+                                                </a>
+                                            </span>
+                                        </div>
+
+                                    </td>
+
+
+
+                                    <td class="total">@item.Total</td>
+                                </tr>
+                                <!-- END TR-->
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row justify-content-start">
+            <div class="col col-lg-5 col-md-6 mt-5 cart-wrap ftco-animate">
+                <div class="cart-total mb-3">
+                    <h3>Cart Totals</h3>
+                    <p class="d-flex">
+                        <span>Subtotal</span>
+                        <span>@Model.OrderTotal.ToString("c")</span>
+                    </p>
+                    <p class="d-flex">
+                        <span>Delivery</span>
+                        <span>$0.00</span>
+                    </p>
+                    <p class="d-flex">
+                        <span>Discount</span>
+                        <span>$0.00</span>
+                    </p>
+                    <hr>
+                    <p class="d-flex total-price">
+                        <span>Total</span>
+                        <span>@Model.OrderTotal.ToString("c")</span>
+                    </p>
+                </div>
+                <p class="text-center"><a  asp-area="Customer" asp-controller="Cart" asp-action="Checkout" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>
+            </div>
+        </div>
+    }
+
+    else
+    {
+        <h2>Your cart is empty.</h2>
+    }
+</div>

@@ -20,26 +20,38 @@ namespace MiniShop.DataAccess.Repository.IRepository
             dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query;
 
-            // for category, user type
-            if (!string.IsNullOrEmpty(includeProperties))
+			if (tracked)
             {
-                foreach (var includeProp in includeProperties
-                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(includeProp);
-                }
-            }
-            query = query.Where(filter);
-            return query.FirstOrDefault();
-        }
+				query = dbSet;
+			}
+            else
+            {
+				query = dbSet.AsNoTracking();
+			}
+			if (!string.IsNullOrEmpty(includeProperties))
+			{
+				foreach (var includeProp in includeProperties
+					.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+				{
+					query = query.Include(includeProp);
+				}
+			}
+			query = query.Where(filter);
+			return query.FirstOrDefault();
+		}
 
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
+            if(filter  != null)
+            {
+                query = query.Where(filter);
+
+            }
             if (!string.IsNullOrEmpty(includeProperties)){
                 foreach(var includeProp in includeProperties
                     .Split(new char[] {',' }, StringSplitOptions.RemoveEmptyEntries))

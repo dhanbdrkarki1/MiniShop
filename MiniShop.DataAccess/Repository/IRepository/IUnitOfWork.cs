@@ -10,6 +10,13 @@ namespace MiniShop.DataAccess.Repository.IRepository
     {
         ICategoryRepository Category { get; }
         IProductRepository Product { get; }
+
+        IShoppingCartRepository ShoppingCart { get; }
+
+        IApplicationUserRepository ApplicationUser { get; }
+
+        IOrderRepository Order { get; }
+        IOrderItemRepository OrderItem { get; }
         void Save();
     }
 }
