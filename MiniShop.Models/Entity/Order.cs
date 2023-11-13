@@ -18,12 +18,11 @@ namespace MiniShop.Models.Entity
         public ApplicationUser ApplicationUser { get; set; }
 
         public DateTime OrderDate { get; set; }
-        public DateTime ShippingDate { get; set; }
         public double OrderTotal { get; set; }
         public string? OrderStatus { get; set; }
+
+        public string? PaymentMethod { get; set; }
         public string? PaymentStatus { get; set; }
-        public string? PaymentDate { get; set; }
-        public string? PaymentDueDate { get; set; }
 
         [Required]
         public string Name { get; set; }

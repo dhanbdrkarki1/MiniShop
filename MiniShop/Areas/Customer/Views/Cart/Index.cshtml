@@ -30,7 +30,9 @@
                                         <a asp-area="Customer" asp-action="Remove" asp-route-cartId="@item.ShoppingCartId"><span class="ion-ios-close"></span></a>
                                     </td>
 
-                                    <td class="image-prod"><div class="img" style="background-image:url(@item.Product.ImageURL);"></div></td>
+                                    <td class="image-prod">
+                                        <img class="img" src="@item.Product.ImageURL"></img>
+                                    </td>
 
                                     <td class="product-name">
                                         <h3>@item.Product.Name</h3>
@@ -77,7 +79,7 @@
                     <h3>Cart Totals</h3>
                     <p class="d-flex">
                         <span>Subtotal</span>
-                        <span>@Model.OrderTotal.ToString("c")</span>
+                        <span>@Model.Order.OrderTotal.ToString("c")</span>
                     </p>
                     <p class="d-flex">
                         <span>Delivery</span>
@@ -90,7 +92,7 @@
                     <hr>
                     <p class="d-flex total-price">
                         <span>Total</span>
-                        <span>@Model.OrderTotal.ToString("c")</span>
+                        <span>@Model.Order.OrderTotal.ToString("c")</span>
                     </p>
                 </div>
                 <p class="text-center"><a  asp-area="Customer" asp-controller="Cart" asp-action="Checkout" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>

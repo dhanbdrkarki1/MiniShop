@@ -4,6 +4,7 @@
 @model IEnumerable<Product>
 
 <div class="container">
+
 	<div class="row">
 		<div class="col-md-8 col-lg-10 order-md-last">
 			<div class="row">
@@ -35,7 +36,7 @@
 									<p class="price"><span>@product.Price.ToString("c")</span></p>
 								</div>
 								<p class="bottom-area d-flex px-3">
-									<a href="#" class="add-to-cart text-center py-2 mr-1">
+									<a asp-area="Customer" asp-action="AddToCart" asp-route-productId="@product.ProductId" class="add-to-cart text-center py-2 mr-1">
 										<span>
 											Add to cart <i class="ion-ios-add ml-1"></i>
 										</span>
@@ -210,5 +211,7 @@
 			</div>
 		</div>
 	</div>
+
+
 </div>
 

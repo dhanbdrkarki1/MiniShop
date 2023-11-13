@@ -1,15 +1,16 @@
-﻿@model ShoppingCartVM
+﻿@model OrderVM
 
 <div class="row">
     <div class="col-xl-10">
-        <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary text-uppercase mb-2 btn-sm"><small>Back To Cart</small></a>
+        <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="btn btn-primary text-uppercase mb-2 btn-sm"><small>Back To Orders</small></a>
     </div>
 </div>
 <div class="row">
+    <input asp-for="Order.OrderId" hidden />
     <div class="col-md-8 ftco-animate">
 
         <form method="post" class="billing-form" id="order-form">
-            <h3 class="mb-4 billing-heading">Shipping Details</h3>
+            <h3 class="mb-4 billing-heading">Order Details</h3>
             <div class="row align-items-end">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -25,8 +26,17 @@
                         <span asp-validation-for="Order.PhoneNumber" class="text-danger"></span>
                     </div>
                 </div>
+
+
                 <div class="w-100"></div>
-                <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input asp-for="Order.ApplicationUser.Email" class="form-control" readonly />
+                        <span asp-validation-for="Order.ApplicationUser.Email" class="text-danger" ></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <div class="form-group">
                         <label>Street Address</label>
                         <input asp-for="Order.StreetAddress" class="form-control" />
@@ -56,6 +66,36 @@
                         <span asp-validation-for="Order.PostalCode" class="text-danger"></span>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Order Date</label>
+                        <input asp-for="@Model.Order.OrderDate" class="form-control" />
+                        <span asp-validation-for="Order.OrderDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Order Status</label>
+                        <input asp-for="Order.OrderStatus" class="form-control" />
+                        <span asp-validation-for="Order.OrderStatus" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Payment Status</label>
+                        <input asp-for="Order.PaymentStatus" class="form-control" />
+                        <span asp-validation-for="Order.PaymentStatus" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <input asp-for="Order.PaymentMethod" class="form-control" />
+                        <span asp-validation-for="Order.PaymentMethod" class="text-danger"></span>
+                    </div>
+                </div>
 
             </div>
         </form><!-- END -->
@@ -66,7 +106,7 @@
         <div class="row">
             <h3 class="billing-heading mb-4">Order Summary:</h3>
             <ul class="list-group mb-3">
-                @foreach (var details in Model.ShoppingCartList)
+                @foreach (var details in Model.OrderItem)
                 {
                     <li class="list-group-item d-flex justify-content-between">
                         <div>
@@ -85,32 +125,9 @@
         </div>
 
 
-        <!-- Payment option-->
         <div class="row mt-2">
             <div class="cart-detail bg-light p-3 p-md-4">
-                <h3 class="billing-heading mb-4">Payment Method</h3>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" class="mr-2"> Direct Bank Tranfer</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" class="mr-2"> Check Payment</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" class="mr-2"> Paypal</label>
-                        </div>
-                    </div>
-                </div>
-                <p><a id="place-order-btn" class="btn btn-primary py-3 px-4">Place an order</a></p>
+                <p><a id="update-order" asp-action="UpdateOrderDetails" class="btn btn-primary py-3 px-4">Update Order</a></p>
             </div>
         </div>
     </div>
@@ -119,9 +136,12 @@
 
 @section Scripts{
     <script>
-        document.getElementById('place-order-btn').onclick = function () {
+        document.getElementById('update-order').onclick = function () {
             document.getElementById('order-form').submit();
         };
     </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
 }
 

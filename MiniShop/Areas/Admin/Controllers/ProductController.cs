@@ -119,28 +119,6 @@ namespace MiniShop.Areas.Admin.Controllers
 
         }
 
-/*        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            Product? product = _unitOfWork.Product.Get(u => u.ProductId == id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                _unitOfWork.Product.Remove(product);
-                _unitOfWork.Save();
-                TempData["success"] = "Product " + product.Name + " has been deleted successfully.";
-                return RedirectToAction("Index");
-
-            }
-        }*/
 
         # region API Calls
         [HttpGet]

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
+using MiniShop.Models.ViewModels;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -63,6 +64,53 @@ namespace MiniShop.Areas.Customer.Controllers
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
+
+
+
+
+		// Add product to cart
+		[Authorize]
+		public IActionResult AddToCart(int productId)
+		{
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+			ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == productId);
+
+			if (cartFromDb != null)
+			{
+				// Update cart if the product is already in the cart
+				cartFromDb.Quantity += 1;
+				_unitOfWork.ShoppingCart.Update(cartFromDb);
+				TempData["success"] = "Product updated in the cart successfully";
+			}
+			else
+			{
+				// Add the product to the cart
+				Product product = _unitOfWork.Product.Get(u => u.ProductId == productId);
+
+				if (product != null)
+				{
+					ShoppingCart cart = new ShoppingCart
+					{
+						Product = product,
+						Quantity = 1,
+						ApplicationUserId = userId
+					};
+
+					_unitOfWork.ShoppingCart.Add(cart);
+					TempData["success"] = "Product added to the cart successfully";
+				}
+				else
+				{
+					TempData["error"] = "Product not found"; // Handle the case where the product doesn't exist
+				}
+			}
+			_unitOfWork.Save();
+
+			return RedirectToAction(nameof(Index));
+		}
+
 
 
 		public IActionResult Privacy()

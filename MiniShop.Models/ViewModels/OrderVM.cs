@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 
 namespace MiniShop.Models.ViewModels
 {
-    public class ShoppingCartVM
+    public class OrderVM
     {
-        public IEnumerable<ShoppingCart> ShoppingCartList { get; set; }
-
         public Order Order { get; set; }
-
-        public bool IsCartEmpty { get; set; }
+        public IEnumerable<OrderItem> OrderItem { get; set; }
     }
 }
