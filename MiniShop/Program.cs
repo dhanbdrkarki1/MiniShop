@@ -23,6 +23,17 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.LogoutPath = $"/Identity/Account/Logout";
     opt.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
+
+// for session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(opt =>
+{
+    opt.IdleTimeout = TimeSpan.FromMinutes(100);
+    opt.Cookie.HttpOnly = true;
+    opt.Cookie.IsEssential = true;
+});
+
+
 builder.Services.AddRazorPages();
 
 
@@ -47,6 +58,7 @@ app.UseRouting();
 app.UseAuthentication();;
 
 app.UseAuthorization();
+app.UseSession();
 
 // map routing to razor pages
 app.MapRazorPages();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
 using MiniShop.Models.ViewModels;
+using MiniShop.Utility;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -26,8 +27,8 @@ namespace MiniShop.Areas.Customer.Controllers
             return View(productList);
         }
 
-		public IActionResult Details(int productId)
-		{
+        public IActionResult Details(int productId)
+        {
             ShoppingCart cart = new()
             {
                 Product = _unitOfWork.Product.Get(u => u.ProductId == productId, includeProperties: "Category"),
@@ -36,16 +37,16 @@ namespace MiniShop.Areas.Customer.Controllers
 
             };
 
-			return View(cart);
-		}
+            return View(cart);
+        }
 
         [HttpPost]
         [Authorize]
         public IActionResult Details(ShoppingCart shoppingCart)
         {
-			var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-			shoppingCart.ApplicationUserId = userId;
+            shoppingCart.ApplicationUserId = userId;
 
             ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
             if (cartFromDb != null)
@@ -53,70 +54,70 @@ namespace MiniShop.Areas.Customer.Controllers
                 // update cart if product in cart exist
                 cartFromDb.Quantity += shoppingCart.Quantity;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
                 TempData["success"] = "Product updated in a cart successfully";
             }
             else
             {
                 // add product to cart
-            _unitOfWork.ShoppingCart.Add(shoppingCart);
-				TempData["success"] = "Product added to cart successfully";
-			}
-            _unitOfWork.Save();
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.Save();
+                //adding cart total no. in session
+                HttpContext.Session.SetInt32(SD.Session_Cart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
+                TempData["success"] = "Product added to cart successfully";
+            }
             return RedirectToAction(nameof(Index));
         }
 
 
 
 
-		// Add product to cart
-		[Authorize]
-		public IActionResult AddToCart(int productId)
-		{
-			var claimsIdentity = (ClaimsIdentity)User.Identity;
-			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-			ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == productId);
-
-			if (cartFromDb != null)
-			{
-				// Update cart if the product is already in the cart
-				cartFromDb.Quantity += 1;
-				_unitOfWork.ShoppingCart.Update(cartFromDb);
-				TempData["success"] = "Product updated in the cart successfully";
-			}
-			else
-			{
-				// Add the product to the cart
-				Product product = _unitOfWork.Product.Get(u => u.ProductId == productId);
-
-				if (product != null)
-				{
-					ShoppingCart cart = new ShoppingCart
-					{
-						Product = product,
-						Quantity = 1,
-						ApplicationUserId = userId
-					};
-
-					_unitOfWork.ShoppingCart.Add(cart);
-					TempData["success"] = "Product added to the cart successfully";
-				}
-				else
-				{
-					TempData["error"] = "Product not found"; // Handle the case where the product doesn't exist
-				}
-			}
-			_unitOfWork.Save();
-
-			return RedirectToAction(nameof(Index));
-		}
-
-
-
-		public IActionResult Privacy()
+        // Add product to cart
+        [Authorize]
+        public IActionResult AddToCart(int productId)
         {
-            return View();
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == productId);
+
+            if (cartFromDb != null)
+            {
+                // Update cart if the product is already in the cart
+                cartFromDb.Quantity += 1;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+                TempData["success"] = "Product updated in the cart successfully";
+            }
+            else
+            {
+                // Add the product to the cart
+                Product product = _unitOfWork.Product.Get(u => u.ProductId == productId);
+
+                if (product != null)
+                {
+                    ShoppingCart cart = new ShoppingCart
+                    {
+                        Product = product,
+                        Quantity = 1,
+                        ApplicationUserId = userId
+                    };
+
+                    _unitOfWork.ShoppingCart.Add(cart);
+                    TempData["success"] = "Product added to the cart successfully";
+                }
+                else
+                {
+                    TempData["error"] = "Product not found"; // Handle the case where the product doesn't exist
+                }
+            }
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index));
         }
+
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

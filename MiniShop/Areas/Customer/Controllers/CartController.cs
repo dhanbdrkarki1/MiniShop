@@ -67,10 +67,12 @@ namespace MiniShop.Areas.Customer.Controllers
 
         public IActionResult Minus(int cartId)
         {
-            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ShoppingCartId == cartId);
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ShoppingCartId == cartId, tracked:true);
             if (cartFromDb.Quantity <= 1)
             {
                 //remove that from cart
+                HttpContext.Session.SetInt32(SD.Session_Cart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
 
                 _unitOfWork.ShoppingCart.Remove(cartFromDb);
             }
@@ -86,7 +88,10 @@ namespace MiniShop.Areas.Customer.Controllers
 
         public IActionResult Remove(int cartId)
         {
-            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ShoppingCartId == cartId);
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ShoppingCartId == cartId, tracked: true);
+
+            HttpContext.Session.SetInt32(SD.Session_Cart,
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
 
             _unitOfWork.ShoppingCart.Remove(cartFromDb);
             _unitOfWork.Save();
@@ -158,7 +163,7 @@ namespace MiniShop.Areas.Customer.Controllers
 
 
             // saving order item
-            foreach(var cart in ShoppingCartVM.ShoppingCartList)
+            foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 OrderItem orderItem = new()
                 {
@@ -172,11 +177,13 @@ namespace MiniShop.Areas.Customer.Controllers
                 _unitOfWork.Save();
             }
 
-            return RedirectToAction(nameof(OrderConfirmation), new {id=ShoppingCartVM.Order.OrderId});
+            return RedirectToAction(nameof(OrderConfirmation), new { id = ShoppingCartVM.Order.OrderId });
         }
 
         public IActionResult OrderConfirmation(int id)
         {
+            HttpContext.Session.Clear();
+
             return View(id);
         }
 

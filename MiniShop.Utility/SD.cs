@@ -22,6 +22,7 @@ namespace MiniShop.Utility
         public const string Payment_Status_Pending = "Pending";
         public const string Payment_Status_Approved = "Approved";
         public const string Payment_Status_Rejected = "Rejected";
+        public const string Session_Cart = "SessionShoppingCart";
 
 
 

@@ -1,0 +1,36 @@
+﻿@using MiniShop.Models.Entity;
+@model RoleManagementVM
+
+<form method="post">
+    <input asp-for="ApplicationUser.Id" hidden />
+    <div class="container">
+        <div class="row mb-3">
+            <h2>Manage User Role</h2>
+        </div>
+        <div class="row">
+            <label asp-for="ApplicationUser.Name"></label>
+            <input asp-for="ApplicationUser.Name" class="form-control" />
+            <span asp-validation-for="ApplicationUser.Name" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <label asp-for="ApplicationUser.Role"></label>
+            <select asp-for="ApplicationUser.Role" asp-items="@Model.RoleList" class="form-select"></select>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <button type="submit" class="btn form-control btn-primary">Update Role</button>
+            </div>
+            <div class="col-6">
+                <a asp-action="Index" class="btn btn-secondary form-control">
+                    Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
