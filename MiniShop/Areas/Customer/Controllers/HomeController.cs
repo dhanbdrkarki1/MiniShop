@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
 using MiniShop.Models.ViewModels;
@@ -22,9 +23,18 @@ namespace MiniShop.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
-
-            return View(productList);
+            ProductCatalogVM productCatalogVM = new()
+            {
+                CategoryList = _unitOfWork.Category.GetAll().
+                                    Select(u => new SelectListItem
+                                    {
+                                        Text = u.Name,
+                                        Value = u.CategoryId.ToString()
+                                    }),
+                Products = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList(),
+                SubCategoryList = _unitOfWork.SubCategory.GetAll().ToList()
+            };
+            return View(productCatalogVM);
         }
 
         public IActionResult Details(int productId)
