@@ -1,0 +1,62 @@
+﻿@using MiniShop.Models.Entity;
+@model List<SubCategory>
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-6">
+            <h2>Sub Category List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="SubCategory" asp-action="Create" class="btn bg-primary text-light">
+                <i class="bi bi-plus-circle-dotted"></i> New Sub Category
+            </a>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="col-6">
+                <h4>No sub category has been added yet.</h4>
+            </div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category Type</th>
+                        <th>Description</th>
+                        <th>Modified Date</th>
+                        <th>Created Date</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var obj in Model)
+                    {
+                        <tr>
+                            <td>@obj.Name</td>
+                            <td>@obj.Category.Name</td>
+                            <td>@obj.Description</td>
+                            <td>@obj.ModifiedDate</td>
+                            <td>@obj.CreatedDate</td>
+                            <td>
+                                <div class="row" role="group">
+                                    <a asp-controller="SubCategory" asp-action="Edit" asp-route-id="@obj.SubCategoryId" class="btn btn-primary">
+                                        Edit
+                                    </a>
+                                    <a asp-controller="SubCategory" asp-action="Delete" asp-route-id="@obj.SubCategoryId" class="btn btn-danger">
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+
+    </div>
+</div>

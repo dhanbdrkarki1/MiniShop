@@ -31,7 +31,7 @@ namespace MiniShop.Models.Entity
         [DisplayName("Stock Quantity")]
         public int StockQuantity { get; set; }
 
-       
+        [DisplayName("Category Type")]
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         [ValidateNever]

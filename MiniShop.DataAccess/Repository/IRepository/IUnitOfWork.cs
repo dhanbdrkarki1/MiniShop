@@ -9,6 +9,8 @@ namespace MiniShop.DataAccess.Repository.IRepository
     public interface IUnitOfWork
     {
         ICategoryRepository Category { get; }
+
+        ISubCategoryRepository SubCategory { get; }
         IProductRepository Product { get; }
 
         IShoppingCartRepository ShoppingCart { get; }

@@ -14,7 +14,13 @@ function loadDataTable() {
             { data: 'applicationUser.email', "width": "20%" },
             { data: 'orderStatus', "width": "10%" },
             { data: 'orderTotal', "width": "10%" },
-            { data: 'orderDate', "width": "20%" },
+            {
+                data: 'orderDate',
+                "render": function (data) {
+                    return formatDateTime(data);
+                },
+                "width": "20%"
+            },
             { 
                 data: 'orderId',
                 "render": function (data) {

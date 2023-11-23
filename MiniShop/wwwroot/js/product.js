@@ -1,5 +1,4 @@
 ﻿var dataTable;
-
 $(document).ready(function () {
     loadDataTable();
 });
@@ -13,8 +12,20 @@ function loadDataTable() {
             { data: 'description', "width": "30%" },
             { data: 'price', "width": "10%" },
             { data: 'stockQuantity', "width": "10%" },
-            { data: 'createdDate', "width": "15%" },
-            { data: 'modifiedDate', "width": "15%" },
+            {
+                data: 'createdDate',
+                "render": function (data) {
+                    return formatDateTime(data);
+                },
+                "width": "15%"
+            },
+            {
+                data: 'modifiedDate',
+                "render": function (data) {
+                    return formatDateTime(data);
+                },
+                "width": "15%"
+            },
             { 
                 data: 'productId',
                 "render": function (data) {

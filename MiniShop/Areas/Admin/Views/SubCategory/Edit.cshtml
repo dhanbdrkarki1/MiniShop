@@ -1,0 +1,44 @@
+﻿@using MiniShop.Models.Entity
+@model SubCategoryVM
+
+<form method="post">
+    <input asp-for="SubCategory.SubCategoryId" hidden />
+    <div class="container">
+        <div class="row mb-3">
+            <h2>Update Sub Category</h2>
+        </div>
+        <div class="row">
+            <label asp-for="SubCategory.Name"></label>
+            <input asp-for="SubCategory.Name" class="form-control" />
+            <span asp-validation-for="SubCategory.Name" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <label asp-for="SubCategory.Description"></label>
+            <input asp-for="SubCategory.Description" class="form-control" />
+            <span asp-validation-for="SubCategory.Description" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <label asp-for="@Model.SubCategory.CategoryId"></label>
+            <select asp-for="@Model.SubCategory.CategoryId" asp-items="@Model.CategoryList" class="form-control">
+                <option disabled selected>--Select Category--</option>
+            </select>
+            <span asp-validation-for="SubCategory.CategoryId" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <button type="submit" class="btn form-control btn-primary">Update Sub Category</button>
+            </div>
+            <div class="col-6">
+                <a asp-controller="SubCategory" asp-action="Index" class="btn btn-secondary form-control">
+                    Return to SubCategory List
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

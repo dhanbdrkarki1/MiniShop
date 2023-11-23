@@ -94,7 +94,8 @@ namespace MiniShop.Areas.Admin.Controllers
                 }
                 else
                 {
-                    productVM.Product.CreatedDate = DateTime.Now;
+                    Product product = _unitOfWork.Product.Get(u => u.ProductId == productVM.Product.ProductId);
+                    productVM.Product.CreatedDate = _unitOfWork.Product.Get(u => u.ProductId == productVM.Product.ProductId).CreatedDate;
                     productVM.Product.ModifiedDate = DateTime.Now;
                     _unitOfWork.Product.Update(productVM.Product);
                     TempData["success"] = "Product updated successfully.";

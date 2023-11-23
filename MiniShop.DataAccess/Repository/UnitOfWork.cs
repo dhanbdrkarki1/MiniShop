@@ -1,5 +1,6 @@
 ﻿using MiniShop.DataAccess.Data;
 using MiniShop.DataAccess.Repository.IRepository;
+using MiniShop.Models.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace MiniShop.DataAccess.Repository
     {
         private readonly ApplicationDbContext _db;
         public ICategoryRepository Category { get; private set; }
+
+        public ISubCategoryRepository SubCategory { get; private set; }
         public IProductRepository Product { get; private set; }
 
         public IShoppingCartRepository ShoppingCart { get; private set; }
@@ -24,6 +27,7 @@ namespace MiniShop.DataAccess.Repository
         {
             _db = db;
             Category = new CategoryRepository(_db);
+            SubCategory = new SubCategoryRepository(_db);
             Product = new ProductRepository(_db);
             ShoppingCart = new ShoppingCartRepository(_db);
             ApplicationUser = new ApplicationUserRepository(_db);
