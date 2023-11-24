@@ -47,7 +47,7 @@ namespace MiniShop.Areas.Customer.Controllers
             var paginatedProducts = productCatalogVM.Products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             productCatalogVM.Products = paginatedProducts;
-            productCatalogVM.PaginationInfo = new PaginationInfo
+            productCatalogVM.PaginationInfo = new ()
             {
                 CurrentPage = page,
                 ItemsPerPage = pageSize,
@@ -88,7 +88,7 @@ namespace MiniShop.Areas.Customer.Controllers
                 cartFromDb.Quantity += shoppingCart.Quantity;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
                 _unitOfWork.Save();
-                TempData["success"] = "Product updated in a cart successfully";
+                TempData["success"] = "Product updated in a cart successfully.";
             }
             else
             {
@@ -98,7 +98,7 @@ namespace MiniShop.Areas.Customer.Controllers
                 //adding cart total no. in session
                 HttpContext.Session.SetInt32(SD.Session_Cart,
                     _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
-                TempData["success"] = "Product added to cart successfully";
+                TempData["success"] = "Product added to cart successfully.";
             }
             return RedirectToAction(nameof(Index));
         }
@@ -113,6 +113,7 @@ namespace MiniShop.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+
             ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == productId);
 
             if (cartFromDb != null)
@@ -120,31 +121,26 @@ namespace MiniShop.Areas.Customer.Controllers
                 // Update cart if the product is already in the cart
                 cartFromDb.Quantity += 1;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
-                TempData["success"] = "Product updated in the cart successfully";
+                TempData["success"] = "Product updated in the cart successfully.";
             }
             else
             {
                 // Add the product to the cart
                 Product product = _unitOfWork.Product.Get(u => u.ProductId == productId);
-
-                if (product != null)
-                {
                     ShoppingCart cart = new ShoppingCart
                     {
-                        Product = product,
+                        ProductId = productId,
                         Quantity = 1,
                         ApplicationUserId = userId
                     };
-
                     _unitOfWork.ShoppingCart.Add(cart);
-                    TempData["success"] = "Product added to the cart successfully";
-                }
-                else
-                {
-                    TempData["error"] = "Product not found"; // Handle the case where the product doesn't exist
-                }
+                    TempData["success"] = "Product added to the cart successfully.";
             }
             _unitOfWork.Save();
+            //adding cart total no. in session
+            HttpContext.Session.SetInt32(SD.Session_Cart,
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
+            TempData["success"] = "Product added to cart successfully.";
 
             return RedirectToAction(nameof(Index));
         }

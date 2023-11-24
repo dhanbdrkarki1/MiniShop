@@ -20,7 +20,7 @@ function loadDataTable() {
 
                     if (lockout > today) {
                         return `<div class="w-75 btn-group" role="group">
-                        <a onclick=LockUnlock('${data.id}') style="cursor:pointer" class="btn btn-danger mx-2"> <i class="bi bi-unlock-fill"></i> Lock </a>
+                        <a onclick=LockUnlock('${data.id}') style="cursor:pointer" class="btn btn-danger mx-2"> <i class="bi bi-lock-fill"></i> Lock </a>
                         <a href="/admin/user/RoleManagement?userId=${data.id}" style="cursor:pointer" class="btn btn - primary mx - 2"> <i class="bi bi-pencil-square"></i> Permission </a>
                         </div>
                     `
