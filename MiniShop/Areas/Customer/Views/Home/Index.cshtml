@@ -67,17 +67,29 @@
                 <div class="col text-center">
                     <div class="block-27">
                         <ul>
-                            <li><a href="#">&lt;</a></li>
-                            <li class="active"><span>1</span></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>
-                            <li><a href="#">&gt;</a></li>
+                            <!-- Previous Page -->
+                            <li>
+                                <a href="?page=@(Model.PaginationInfo.CurrentPage - 1 <= 0 ? 1 : Model.PaginationInfo.CurrentPage - 1)&subCategoryId=@Model.PaginationInfo.UrlParams["subCategoryId"]">&lt;</a>
+                            </li>
+
+                            <!-- Page Numbers -->
+                            @for (int i = 1; i <= Model.PaginationInfo.TotalPages; i++)
+                            {
+                                <li class="@(i == Model.PaginationInfo.CurrentPage ? "active" : "")">
+                                    <a href="?page=@i&subCategoryId=@Model.PaginationInfo.UrlParams["subCategoryId"]">@i</a>
+                                </li>
+                            }
+
+                            <!-- Next Page -->
+                            <li>
+                                <a href="?page=@(Model.PaginationInfo.CurrentPage + 1 > Model.PaginationInfo.TotalPages ? 1 : Model.PaginationInfo.CurrentPage + 1)&subCategoryId=@Model.PaginationInfo.UrlParams["subCategoryId"]">&gt;</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
             </div>
+
+
         </div>
 
 

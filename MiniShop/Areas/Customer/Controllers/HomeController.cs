@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MiniShop.DataAccess.Repository.IRepository;
+using MiniShop.Models;
 using MiniShop.Models.Entity;
 using MiniShop.Models.ViewModels;
 using MiniShop.Utility;
@@ -21,26 +22,42 @@ namespace MiniShop.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(int? subCategoryId)
+        public IActionResult Index(int? subCategoryId, int page = 1, int pageSize = 6)
         {
-
-            ProductCatalogVM productCatalogVM = new()
+            var productCatalogVM = new ProductCatalogVM
             {
-                CategoryList = _unitOfWork.Category.GetAll().
-                                    Select(u => new SelectListItem
-                                    {
-                                        Text = u.Name,
-                                        Value = u.CategoryId.ToString()
-                                    }),
-                Products = _unitOfWork.Product.GetAll(includeProperties: "Category,SubCategory").ToList(),
+                CategoryList = _unitOfWork.Category.GetAll()
+                    .Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.CategoryId.ToString()
+                    }),
                 SubCategoryList = _unitOfWork.SubCategory.GetAll().ToList()
             };
+
+            productCatalogVM.Products = _unitOfWork.Product.GetAll(includeProperties: "Category,SubCategory").ToList();
+
             if (subCategoryId != null)
             {
-                productCatalogVM.Products = _unitOfWork.Product.GetAll(u => u.SubCategoryId == subCategoryId, includeProperties: "Category,SubCategory").ToList();
+                productCatalogVM.Products = _unitOfWork.Product.GetAll(u => u.SubCategoryId == subCategoryId).ToList();
             }
+
+            int totalProducts = productCatalogVM.Products.Count();
+
+            var paginatedProducts = productCatalogVM.Products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            productCatalogVM.Products = paginatedProducts;
+            productCatalogVM.PaginationInfo = new PaginationInfo
+            {
+                CurrentPage = page,
+                ItemsPerPage = pageSize,
+                TotalItems = totalProducts,
+                UrlParams = new Dictionary<string, string> { { "subCategoryId", subCategoryId.ToString() } }
+            };
+
             return View(productCatalogVM);
         }
+
 
 
         public IActionResult Details(int productId)
