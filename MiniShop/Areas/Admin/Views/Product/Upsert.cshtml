@@ -18,10 +18,18 @@
 
                 <div class="row">
                     <label asp-for="@Model.Product.CategoryId"></label>
-                    <select asp-for="@Model.Product.CategoryId" asp-items="@Model.CategoryList" class="form-control">
+                    <select asp-for="@Model.Product.CategoryId" asp-items="@Model.CategoryList" class="form-control" id="CategoryList">
                         <option disabled selected>--Select Category--</option>
                     </select>
                     <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <label asp-for="@Model.Product.SubCategoryId"></label>
+                    <select asp-for="@Model.Product.SubCategoryId" asp-items="@Model.SubCategoryList" class="form-control" id="SubCategoryList">
+                        <option disabled selected>--Select SubCategory--</option>
+                    </select>
+                    <span asp-validation-for="Product.SubCategoryId" class="text-danger"></span>
                 </div>
 
                 <div class="row">
@@ -72,6 +80,39 @@
                 plugins: 'mentions anchor autolink charmap codesample emoticons image link lists table visualblocks wordcount',
                 toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link table | align lineheight | tinycomments | checklist numlist bullist indent outdent',
             });
+
+        $('#CategoryList').change(function () {
+            var selectedCategoryId = $(this).val();
+
+            $.ajax({
+                url: '/Admin/Product/GetSubCategoriesByCategoryId',
+                type: 'GET',
+                data: { categoryId: selectedCategoryId },
+                success: function (subCategories) {
+                    // Update the SubCategory dropdown with fetched data
+                    $('#SubCategoryList').empty();
+
+                    // Add default "Select SubCategory" option
+                    $('#SubCategoryList').append($('<option>', {
+                        value: '',
+                        text: '--Select SubCategory--',
+                        disabled: true,
+                        selected: true // Select this by default to prompt user selection
+                    }));
+
+                    // Add fetched subcategories
+                    $.each(subCategories, function (index, subCategory) {
+                        $('#SubCategoryList').append($('<option>', {
+                            value: subCategory.value,
+                            text: subCategory.text
+                        }));
+                    });
+                }
+            });
+        });
+
+
+
     </script>
     @{
         <partial name="_ValidationScriptsPartial" />

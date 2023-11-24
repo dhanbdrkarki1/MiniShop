@@ -377,9 +377,14 @@ namespace MiniShop.DataAccess.Migrations
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
+                    b.Property<int>("SubCategoryId")
+                        .HasColumnType("int");
+
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("SubCategoryId");
 
                     b.ToTable("Products");
                 });
@@ -551,10 +556,18 @@ namespace MiniShop.DataAccess.Migrations
                     b.HasOne("MiniShop.Models.Entity.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniShop.Models.Entity.SubCategory", "SubCategory")
+                        .WithMany()
+                        .HasForeignKey("SubCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("SubCategory");
                 });
 
             modelBuilder.Entity("MiniShop.Models.Entity.ShoppingCart", b =>

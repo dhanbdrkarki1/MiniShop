@@ -14,6 +14,7 @@ namespace MiniShop.DataAccess.Repository.IRepository
             _db = db;
             this.dbSet = _db.Set<T>(); // equivalent to _db.Categories = dbSet
             _db.Products.Include(u => u.Category).Include(u => u.CategoryId);
+            _db.Products.Include(u => u.SubCategory).Include(u => u.SubCategoryId);
         }
         public void Add(T entity)
         {

@@ -9,6 +9,7 @@ function loadDataTable() {
         "columns": [
             { data: 'name', "width": "20%" },
             { data: 'category.name', "width": "10%" },
+            { data: 'subCategory.name', "width": "10%" },
             { data: 'description', "width": "30%" },
             { data: 'price', "width": "10%" },
             { data: 'stockQuantity', "width": "10%" },

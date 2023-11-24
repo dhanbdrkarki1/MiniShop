@@ -21,8 +21,9 @@ namespace MiniShop.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? subCategoryId)
         {
+
             ProductCatalogVM productCatalogVM = new()
             {
                 CategoryList = _unitOfWork.Category.GetAll().
@@ -31,11 +32,16 @@ namespace MiniShop.Areas.Customer.Controllers
                                         Text = u.Name,
                                         Value = u.CategoryId.ToString()
                                     }),
-                Products = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList(),
+                Products = _unitOfWork.Product.GetAll(includeProperties: "Category,SubCategory").ToList(),
                 SubCategoryList = _unitOfWork.SubCategory.GetAll().ToList()
             };
+            if (subCategoryId != null)
+            {
+                productCatalogVM.Products = _unitOfWork.Product.GetAll(u => u.SubCategoryId == subCategoryId, includeProperties: "Category,SubCategory").ToList();
+            }
             return View(productCatalogVM);
         }
+
 
         public IActionResult Details(int productId)
         {

@@ -36,6 +36,13 @@ namespace MiniShop.Models.Entity
         [ForeignKey("CategoryId")]
         [ValidateNever]
         public Category Category { get; set; }
+
+        [DisplayName("Sub Category Type")]
+        public int SubCategoryId { get; set; }
+        [ForeignKey("SubCategoryId")]
+        [ValidateNever]
+        public SubCategory SubCategory { get; set; }
+
         [ValidateNever]
         public string ImageURL { get; set; }
 

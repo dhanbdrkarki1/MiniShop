@@ -26,10 +26,28 @@ namespace MiniShop.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            List<Product> products = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();
+            List<Product> products = _unitOfWork.Product.GetAll(includeProperties:"Category,SubCategory").ToList();
 
             return View(products);
         }
+
+        public IActionResult ShowSubCategoryProduct(int subCategoryId)
+        {
+            return RedirectToAction(nameof(Index), new { subCategoryId });
+        }
+
+        [HttpGet]
+        public IActionResult GetSubCategoriesByCategoryId(int categoryId)
+        {
+            var subCategories = _unitOfWork.SubCategory.GetAll(u => u.CategoryId == categoryId)
+                                    .Select(u => new SelectListItem
+                                    {
+                                        Text = u.Name,
+                                        Value = u.SubCategoryId.ToString()
+                                    });
+            return Json(subCategories);
+        }
+
 
         public IActionResult Upsert(int? id)
         {
@@ -52,6 +70,12 @@ namespace MiniShop.Areas.Admin.Controllers
             {
                 //update
                 productVM.Product = _unitOfWork.Product.Get(u => u.ProductId ==  id);
+                productVM.SubCategoryList = _unitOfWork.SubCategory.GetAll(u => u.SubCategoryId == productVM.Product.SubCategoryId).
+                                    Select(u => new SelectListItem
+                                    {
+                                        Text = u.Name,
+                                        Value = u.SubCategoryId.ToString()
+                                    });
                 return View(productVM );
             }
         }
@@ -124,7 +148,7 @@ namespace MiniShop.Areas.Admin.Controllers
         # region API Calls
         [HttpGet]
         public IActionResult GetAll(int id) {
-            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category,SubCategory").ToList();
             return Json(new { data = objProductList });
         }
 
