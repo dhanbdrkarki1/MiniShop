@@ -28,5 +28,7 @@ namespace MiniShop.Models.Entity
         public double Price { get; set; }
 		[NotMapped]
 		public double Total { get; set; }
-	}
+
+
+    }
 }

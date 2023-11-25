@@ -1,4 +1,7 @@
 ﻿@model ShoppingCartVM
+@{
+    ViewData["Title"] = "Cart";
+}
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -79,15 +82,15 @@
                     <h3>Cart Totals</h3>
                     <p class="d-flex">
                         <span>Subtotal</span>
-                        <span>@Model.Order.OrderTotal.ToString("c")</span>
+                        <span>@Model.SubTotal.ToString("c")</span>
                     </p>
                     <p class="d-flex">
                         <span>Delivery</span>
-                        <span>$0.00</span>
+                        <span>@SD.Delivery_Fee.ToString("c")</span>
                     </p>
                     <p class="d-flex">
-                        <span>Discount</span>
-                        <span>$0.00</span>
+                        <span>VAT Amount (@SD.VAT_Rate%)</span>
+                        <span>@Model.VATAmount</span>
                     </p>
                     <hr>
                     <p class="d-flex total-price">

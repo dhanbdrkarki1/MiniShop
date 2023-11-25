@@ -7,10 +7,11 @@
         <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary text-uppercase mb-2 btn-sm"><small>Back To Cart</small></a>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-8 ftco-animate">
+<form method="post" id="order-form">
+    <div class="row">
+        <!-- Shipping Details -->
+        <div class="col-md-8 ftco-animate billing-form">
 
-        <form method="post" class="billing-form" id="order-form">
             <h3 class="mb-4 billing-heading">Shipping Details</h3>
             <div class="row align-items-end">
                 <div class="col-md-6">
@@ -60,63 +61,70 @@
                 </div>
 
             </div>
-        </form><!-- END -->
-    </div>
-
-
-    <div class="col-md-4">
-        <div class="row">
-            <h3 class="billing-heading mb-4">Order Summary:</h3>
-            <ul class="list-group mb-3">
-                @foreach (var details in Model.ShoppingCartList)
-                {
-                    <li class="list-group-item d-flex justify-content-between">
-                        <div>
-                            <h6 class="my-0">@details.Product.Name</h6>
-                            <small class="text-muted">Quantity: @details.Quantity</small>
-                        </div>
-                        <span class="text-muted">@((details.Price * details.Quantity).ToString("c")) </span>
-                    </li>
-                }
-
-                <li class="list-group-item d-flex justify-content-between bg-light">
-                    <small class="text-info">Total (USD)</small>
-                    <strong class="text-info">@Model.Order.OrderTotal.ToString("c")</strong>
-                </li>
-            </ul>
         </div>
 
+        <!-- Shipping Details END-->
+        <!-- ORDER SUMMARY -->
+        <div class="col-md-4">
+            <div class="row">
+                <h3 class="billing-heading mb-4">Order Summary:</h3>
+                <ul class="list-group mb-3">
+                    @foreach (var details in Model.ShoppingCartList)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div>
+                                <h6 class="my-0">@details.Product.Name</h6>
+                                <small class="text-muted">Quantity: @details.Quantity</small>
+                            </div>
+                            <span class="text-muted">@((details.Price * details.Quantity).ToString("c")) </span>
+                        </li>
+                    }
 
-        <!-- Payment option-->
-        <div class="row mt-2">
-            <div class="cart-detail bg-light p-3 p-md-4">
-                <h3 class="billing-heading mb-4">Payment Method</h3>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" class="mr-2"> Direct Bank Tranfer</label>
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <small class="text-dark font-weight-bold">SubTotal </small>
+                        <strong class="text-dark">@Model.SubTotal.ToString("c")</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <small class="text-dark font-weight-bold">VAT (@SD.VAT_Rate%) </small>
+                        <strong class="text-dark">@Model.VATAmount.ToString("c")</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <small class="text-dark font-weight-bold">Delivery </small>
+                        <strong class="text-dark">@SD.Delivery_Fee.ToString("c")</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <small class="text-info">Total (USD)</small>
+                        <strong class="text-info">@Model.Order.OrderTotal.ToString("c")</strong>
+                    </li>
+                </ul>
+            </div>
+            <!-- ORDER SUMMARY END -->
+            <!-- Payment option-->
+            <div class="row mt-2">
+                <div class="cart-detail bg-light p-3 p-md-4">
+                    <h3 class="billing-heading mb-4">Payment Method</h3>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="radio">
+                                <label><input type="radio" asp-for="Order.PaymentMethod" value="@SD.Payment_Method_Cash" name="Order.PaymentMethod" class="mr-2" checked> @SD.Payment_Method_Cash</label>
+
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" class="mr-2"> Check Payment</label>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="radio">
+                                <label><input type="radio" asp-for="Order.PaymentMethod" value="@SD.Payment_Method_Esewa" name="Order.PaymentMethod" class="mr-2"> @SD.Payment_Method_Esewa</label>
+                            </div>
                         </div>
                     </div>
+                    <p><a id="place-order-btn" class="btn btn-primary py-3 px-4">Place an order</a></p>
                 </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" class="mr-2"> Paypal</label>
-                        </div>
-                    </div>
-                </div>
-                <p><a id="place-order-btn" class="btn btn-primary py-3 px-4">Place an order</a></p>
             </div>
         </div>
     </div>
-</div>
+</form>
+<!-- END -->
 
 
 @section Scripts{

@@ -24,5 +24,10 @@ namespace MiniShop.DataAccess.Repository
         {
             _db.ShoppingCarts.Update(obj);
         }
+
+        public void Remove(IEnumerable<ShoppingCart> cartItemsToRemove)
+        {
+            _db.ShoppingCarts.RemoveRange(cartItemsToRemove);
+        }
     }
 }

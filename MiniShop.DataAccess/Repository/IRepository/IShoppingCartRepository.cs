@@ -9,6 +9,7 @@ namespace MiniShop.DataAccess.Repository.IRepository
 {
     public interface IShoppingCartRepository : IRepository<ShoppingCart>
     {
+        void Remove(IEnumerable<ShoppingCart> cartItemsToRemove);
         void Update(ShoppingCart obj);
     }
 }

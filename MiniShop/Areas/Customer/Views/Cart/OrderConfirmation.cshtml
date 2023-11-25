@@ -2,13 +2,10 @@
 
 <div class="container row pt-4">
     <div class="col-12 text-center">
-        <h1 class="text-primary text-center">Order Placed Successfully!</h1>
+        <h1 class="text-primary text-center">Order has been placed Successfully!</h1>
         Your Order Number is : @Model <br /><br />
         @*<img src="~/images/lawn_leaf.jpg" width="65%" />*@
-    </div>
-    <div class="col-12 text-center" style="color:maroon">
-        <br />
-        Your order has been placed successfully! <br />
+        <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary text-uppercase mb-2 btn-sm"><small>Continue Shopping</small></a>
     </div>
 
 </div> 

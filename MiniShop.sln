@@ -5,11 +5,11 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop", "MiniShop\MiniShop.csproj", "{7131887E-0C80-4A14-AC2E-5D5F45921319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.DataAccess", "MiniShop.DataAccess\MiniShop.DataAccess.csproj", "{88106F05-4B29-4AE6-8868-5D013E925415}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.DataAccess", "MiniShop.DataAccess\MiniShop.DataAccess.csproj", "{88106F05-4B29-4AE6-8868-5D013E925415}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.Models", "MiniShop.Models\MiniShop.Models.csproj", "{E1FBFD7F-C6EC-4D8F-ADC0-C3E1E2D60BA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Models", "MiniShop.Models\MiniShop.Models.csproj", "{E1FBFD7F-C6EC-4D8F-ADC0-C3E1E2D60BA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniShop.Utility", "MiniShop.Utility\MiniShop.Utility.csproj", "{7E780F06-064E-4C60-97AF-31773E2F7E8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniShop.Utility", "MiniShop.Utility\MiniShop.Utility.csproj", "{7E780F06-064E-4C60-97AF-31773E2F7E8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

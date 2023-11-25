@@ -16,6 +16,7 @@ namespace MiniShop.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        public ShoppingCartVM ShoppingCartVM { get; set; }
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -47,7 +48,7 @@ namespace MiniShop.Areas.Customer.Controllers
             var paginatedProducts = productCatalogVM.Products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             productCatalogVM.Products = paginatedProducts;
-            productCatalogVM.PaginationInfo = new ()
+            productCatalogVM.PaginationInfo = new()
             {
                 CurrentPage = page,
                 ItemsPerPage = pageSize,
@@ -127,14 +128,14 @@ namespace MiniShop.Areas.Customer.Controllers
             {
                 // Add the product to the cart
                 Product product = _unitOfWork.Product.Get(u => u.ProductId == productId);
-                    ShoppingCart cart = new ShoppingCart
-                    {
-                        ProductId = productId,
-                        Quantity = 1,
-                        ApplicationUserId = userId
-                    };
-                    _unitOfWork.ShoppingCart.Add(cart);
-                    TempData["success"] = "Product added to the cart successfully.";
+                ShoppingCart cart = new ShoppingCart
+                {
+                    ProductId = productId,
+                    Quantity = 1,
+                    ApplicationUserId = userId
+                };
+                _unitOfWork.ShoppingCart.Add(cart);
+                TempData["success"] = "Product added to the cart successfully.";
             }
             _unitOfWork.Save();
             //adding cart total no. in session
@@ -145,7 +146,11 @@ namespace MiniShop.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [Authorize]
+        public IActionResult BuyNow(int productId)
+        {
+            return RedirectToAction("Checkout", "Cart", new { productId = productId});
+        }
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

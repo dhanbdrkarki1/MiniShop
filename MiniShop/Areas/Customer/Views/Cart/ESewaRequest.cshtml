@@ -1,0 +1,38 @@
+﻿@model int
+@{
+    string baseUrl = Url.Content("~");
+    string absoluteUri = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}{Context.Request.QueryString}";
+}
+
+<style>
+/*    #myEsewaForm {
+        display: none;
+    }*/
+</style>
+
+<h3 style="text-align: center">
+    You willl be redirected to the esewa website.
+</h3>
+<form action="https://uat.esewa.com.np/epay/main" method="POST" id="myEsewaForm">
+    <input value="@ViewBag.OrderTotal" name="tAmt" type="text" />
+    <input value="@ViewBag.SubTotal" name="amt" type="text" />
+    <input value="@ViewBag.VATAmount" name="txAmt" type="text" />
+    <input value="0" name="psc" type="text" />
+    <input value="@SD.Delivery_Fee" name="pdc" type="text" />
+    <input value="EPAYTEST" name="scd" type="text" />
+    <input value="@ViewBag.OrderId" name="pid" type="text" />
+    <input value="https://localhost:44371/Customer/Cart/ESewaVerify"
+           type="text"
+           name="su" />
+    <input value="@absoluteUri" type="text" name="fu" />
+    <input value="Submit" type="submit" />
+</form>
+
+
+@section Scripts{
+    <script>
+        setTimeout(() => {
+            document.getElementById('myEsewaForm').submit();
+        }, 25000);
+    </script>
+    }

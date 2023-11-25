@@ -13,6 +13,7 @@ function loadDataTable() {
             { data: 'phoneNumber', "width": "10%" },
             { data: 'applicationUser.email', "width": "20%" },
             { data: 'orderStatus', "width": "10%" },
+            { data: 'paymentStatus', "width": "10%" },
             { data: 'orderTotal', "width": "10%" },
             {
                 data: 'orderDate',
