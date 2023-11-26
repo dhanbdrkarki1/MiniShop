@@ -75,6 +75,13 @@
                         </li>
                     }
 
+                    @if (User.IsInRole(SD.Role_Customer))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Customer" asp-controller="MyOrder" asp-action="Index">My Order</a>
+                        </li>
+                    }
+
 
                     @if (User.IsInRole(SD.Role_Admin))
                     {

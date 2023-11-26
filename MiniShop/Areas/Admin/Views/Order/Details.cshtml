@@ -1,15 +1,17 @@
 ﻿@model OrderVM
-
+@{
+    ViewData["Title"] = "Order Details";
+}
 <div class="row">
     <div class="col-xl-10">
         <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="btn btn-primary text-uppercase mb-2 btn-sm"><small>Back To Orders</small></a>
     </div>
 </div>
-<div class="row">
-    <input asp-for="Order.OrderId" hidden />
-    <div class="col-md-8 ftco-animate">
+<form method="post" class="billing-form" asp-action="UpdateOrderDetails">
+    <div class="row">
+        <input asp-for="Order.OrderId" hidden />
+        <div class="col-md-8 ftco-animate">
 
-        <form method="post" class="billing-form" id="order-form">
             <h3 class="mb-4 billing-heading">Order Details</h3>
             <div class="row align-items-end">
                 <div class="col-md-6">
@@ -33,7 +35,7 @@
                     <div class="form-group">
                         <label>Email</label>
                         <input asp-for="Order.ApplicationUser.Email" class="form-control" readonly />
-                        <span asp-validation-for="Order.ApplicationUser.Email" class="text-danger" ></span>
+                        <span asp-validation-for="Order.ApplicationUser.Email" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -77,69 +79,68 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Order Status</label>
-                        <input asp-for="Order.OrderStatus" class="form-control" />
-                        <span asp-validation-for="Order.OrderStatus" class="text-danger"></span>
+                        <select asp-for="@Model.Order.OrderStatus" asp-items="@Model.OrderStatusList" class="form-control">
+                            <option disabled selected>--Select Order Status--</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Payment Status</label>
-                        <input asp-for="Order.PaymentStatus" class="form-control" />
-                        <span asp-validation-for="Order.PaymentStatus" class="text-danger"></span>
+                        <select asp-for="@Model.Order.PaymentStatus" asp-items="@Model.PaymentStatusList" class="form-control">
+                            <option disabled selected>--Select Payment Status--</option>
+                        </select>
                     </div>
                 </div>
+
+
                 <div class="w-100"></div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Payment Method</label>
-                        <input asp-for="Order.PaymentMethod" class="form-control" />
-                        <span asp-validation-for="Order.PaymentMethod" class="text-danger"></span>
+                        <select asp-for="@Model.Order.PaymentMethod" asp-items="@Model.PaymentMethodList" class="form-control">
+                            <option disabled selected>--Select Payment Method--</option>
+                        </select>
                     </div>
                 </div>
 
             </div>
-        </form><!-- END -->
-    </div>
-
-
-    <div class="col-md-4">
-        <div class="row">
-            <h3 class="billing-heading mb-4">Order Summary:</h3>
-            <ul class="list-group mb-3">
-                @foreach (var details in Model.OrderItem)
-                {
-                    <li class="list-group-item d-flex justify-content-between">
-                        <div>
-                            <h6 class="my-0">@details.Product.Name</h6>
-                            <small class="text-muted">Quantity: @details.Quantity</small>
-                        </div>
-                        <span class="text-muted">@((details.Price * details.Quantity).ToString("c")) </span>
-                    </li>
-                }
-
-                <li class="list-group-item d-flex justify-content-between bg-light">
-                    <small class="text-info">Total (USD)</small>
-                    <strong class="text-info">@Model.Order.OrderTotal.ToString("c")</strong>
-                </li>
-            </ul>
         </div>
 
 
-        <div class="row mt-2">
-            <div class="cart-detail bg-light p-3 p-md-4">
-                <p><a id="update-order" asp-action="UpdateOrderDetails" class="btn btn-primary py-3 px-4">Update Order</a></p>
+        <div class="col-md-4">
+            <div class="row">
+                <h3 class="billing-heading mb-4">Order Summary:</h3>
+                <ul class="list-group mb-3">
+                    @foreach (var details in Model.OrderItem)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div>
+                                <h6 class="my-0">@details.Product.Name</h6>
+                                <small class="text-muted">Quantity: @details.Quantity</small>
+                            </div>
+                            <span class="text-muted">@((details.Price * details.Quantity).ToString("c")) </span>
+                        </li>
+                    }
+
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <small class="text-info">Total (USD)</small>
+                        <strong class="text-info">@Model.Order.OrderTotal.ToString("c")</strong>
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="row mt-2">
+                <div class="cart-detail bg-light p-3 p-md-4">
+                    <input type="submit" value="Update Order" class="btn btn-primary py-3 px-4" />
+                </div>
             </div>
         </div>
+
     </div>
-</div>
-
-
+</form><!-- END -->
 @section Scripts{
-    <script>
-        document.getElementById('update-order').onclick = function () {
-            document.getElementById('order-form').submit();
-        };
-    </script>
     @{
         <partial name="_ValidationScriptsPartial" />
     }

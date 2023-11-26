@@ -19,6 +19,8 @@ namespace MiniShop.DataAccess.Repository.IRepository
 
         IOrderRepository Order { get; }
         IOrderItemRepository OrderItem { get; }
+
+        IMyOrderRepository MyOrder { get; }
         void Save();
     }
 }
