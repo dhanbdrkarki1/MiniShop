@@ -63,6 +63,16 @@ namespace MiniShop.Areas.Customer.Controllers
 
         public IActionResult Details(int productId)
         {
+            var product = _unitOfWork.Product.Get(u => u.ProductId == productId, includeProperties: "Category");
+            var reviews = _unitOfWork.ProductReview.GetAll(r => r.ProductId == productId).ToList();
+
+            ProductReviewVM productReviewVM = new()
+            {
+                Title = product.Name, 
+                ProductReviewsList = reviews,
+                ProductId = productId
+            };
+
             ShoppingCart cart = new()
             {
                 Product = _unitOfWork.Product.Get(u => u.ProductId == productId, includeProperties: "Category"),
@@ -71,22 +81,27 @@ namespace MiniShop.Areas.Customer.Controllers
 
             };
 
-            return View(cart);
+            ProductVM productVM = new()
+            {
+                ShoppingCart = cart,
+                ProductReviewVM = productReviewVM
+            };
+            return View(productVM);
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Details(ShoppingCart shoppingCart)
+        public IActionResult Details(ProductVM productVM)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            shoppingCart.ApplicationUserId = userId;
+            productVM.ShoppingCart.ApplicationUserId = userId;
 
-            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == productVM.ShoppingCart.ProductId);
             if (cartFromDb != null)
             {
                 // update cart if product in cart exist
-                cartFromDb.Quantity += shoppingCart.Quantity;
+                cartFromDb.Quantity += productVM.ShoppingCart.Quantity;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
                 _unitOfWork.Save();
                 TempData["success"] = "Product updated in a cart successfully.";
@@ -94,7 +109,7 @@ namespace MiniShop.Areas.Customer.Controllers
             else
             {
                 // add product to cart
-                _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.ShoppingCart.Add(productVM.ShoppingCart);
                 _unitOfWork.Save();
                 //adding cart total no. in session
                 HttpContext.Session.SetInt32(SD.Session_Cart,
@@ -103,8 +118,6 @@ namespace MiniShop.Areas.Customer.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
-
 
 
         // Add product to cart

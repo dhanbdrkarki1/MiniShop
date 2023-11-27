@@ -14,8 +14,12 @@ namespace MiniShop.Models.ViewModels
         public Product Product { get; set; }
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; }
-
+        [ValidateNever]
         public IEnumerable<SelectListItem> SubCategoryList { get; set; }
+
+        public ProductReviewVM ProductReviewVM { get; set; }
+
+        public ShoppingCart ShoppingCart { get; set; }
 
     }
 }

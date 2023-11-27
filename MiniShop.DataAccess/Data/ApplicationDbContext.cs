@@ -39,5 +39,7 @@ namespace MiniShop.DataAccess.Data
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+
+        public DbSet<ProductReview> ProductReviews { get; set; }
     }
 }

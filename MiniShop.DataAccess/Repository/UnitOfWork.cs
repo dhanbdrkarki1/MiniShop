@@ -25,6 +25,8 @@ namespace MiniShop.DataAccess.Repository
 
         public IMyOrderRepository MyOrder { get; private set; }
 
+        public IProductReviewRepository ProductReview { get; private set; }
+
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
@@ -36,6 +38,7 @@ namespace MiniShop.DataAccess.Repository
             Order = new OrderRepository(_db);
             OrderItem = new OrderItemRepository(_db);
             MyOrder = new MyOrderRepository(_db);
+            ProductReview = new ProductReviewRepository(_db);
 
         }
 
