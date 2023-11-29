@@ -1,8 +1,12 @@
 ﻿@model ProductVM
+@{
+    ViewData["Title"] = @Model.ShoppingCart.Product.Name;
+
+}
 
 <div class="container">
 
-    <form method="post" id="cart-form">
+    <form method="post" action="Details" id="cart-form">
         <input asp-for="ShoppingCart.ProductId" hidden />
         <div class="row">
             <div class="col-lg-6 mb-5 ftco-animate">
@@ -80,47 +84,82 @@
     <h3>Reviews</h3>
 
     <div class="pt-2 mt-2">
-        <h3 class="mb-2">6 Comments</h3>
+        <h3 class="mb-2">
+            @(Model.ProductReviewVM.ProductReviewsList.Count() == 0 ? "0 Comment" : $"{Model.ProductReviewVM.ProductReviewsList.Count()} Comments")
+        </h3>
+
+
+
         <ul class="comment-list">
-            <li class="comment">
-                <div class="vcard bio">
-                    <img src="images/person_1.jpg" alt="Image placeholder">
-                </div>
-                <div class="comment-body">
-                    <h3>John Doe</h3>
-                    <div class="meta">June 27, 2018 at 2:21pm</div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus.</p>
-                </div>
-            </li>
+            @foreach (var review in Model.ProductReviewVM.ProductReviewsList)
+            {
+                string fullName = review.ApplicationUser.Name;
+                <li class="comment">
+                    <div class="vcard bio">
+                        <img src="\images\user\user.png" alt="@fullName">
+                    </div>
+                    <div class="comment-body">
+                        <h3>@fullName</h3>
+                        <div class="form-group">
+                            <div class="d-flex">
+                                <div class="text-primary">
+                                    @{
+                                        int rating = review.Rating;
+                                        for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="bi @(i <= rating ? "bi-star-fill" : "bi-star")" data-value="@i"></i>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="meta">@review.PublishedAt.ToString("MMMM dd, yyyy 'at' HH:mm tt")</div>
+                        <p>@review.ReviewText</p>
+                    </div>
+                </li>
+            }
         </ul>
         <!-- END comment-list -->
-        <h3>Leave your review</h3>
-        <div class="comment-form-wrap pt-2">
-            <form action="#" class="p-2 bg-light">
-                <div class="form-group">
-                    <div class="d-flex">
-                        <p class="mb-0 mr-2">Your Rating * :</p>
-                        <div class="text-primary">
-                            <i class="bi bi-star"></i>
-                            <i class="bi bi-star"></i>
-                            <i class="bi bi-star"></i>
-                            <i class="bi bi-star"></i>
-                            <i class="bi bi-star"></i>
+
+        <!-- Post comment -->
+        @if (Model.HasPurchasedProduct)
+        {
+            <h3>Leave your review</h3>
+            <div class="comment-form-wrap pt-2">
+                <form method="post" asp-action="PostReview" class="p-2 bg-light">
+                    <input asp-for="ShoppingCart.ProductId" hidden />
+                    <div class="form-group">
+                        <div class="d-flex">
+                            <p class="mb-0 mr-2">Your Rating * :</p>
+                            <div class="text-primary" id="ratingStars">
+                                <i class="bi bi-star" data-value="1"></i>
+                                <i class="bi bi-star" data-value="2"></i>
+                                <i class="bi bi-star" data-value="3"></i>
+                                <i class="bi bi-star" data-value="4"></i>
+                                <i class="bi bi-star" data-value="5"></i>
+                            </div>
+                            <span asp-validation-for="ProductReviewVM.Rating" class="text-danger"></span>
+                            <input type="hidden" id="selectedRating" asp-for="@Model.ProductReviewVM.Rating" name="ProductReviewVM.Rating" value="" />
 
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="message">Your Review *</label>
-                    <textarea name="" id="message" cols="30" rows="10" class="form-control"></textarea>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Post Comment" class="btn py-3 px-4 btn-primary">
-                </div>
 
-            </form>
-        </div>
+                    <div class="form-group">
+                        <label for="message">Your Review *</label>
+                        <textarea asp-for="@Model.ProductReviewVM.ReviewText" name="ProductReviewVM.ReviewText" id="message" cols="30" rows="10" class="form-control"></textarea>
+                        <span asp-validation-for="ProductReviewVM.ReviewText" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Post Comment" class="btn py-3 px-4 btn-primary">
+                    </div>
+
+                </form>
+            </div>
+        }
+        <!-- Post comment -->
+
+
     </div>
 </div>
 
@@ -129,5 +168,47 @@
         document.getElementById('add-to-cart-btn').onclick = function () {
             document.getElementById('cart-form').submit();
         };
+
+
+        // script for rating
+        document.addEventListener("DOMContentLoaded", function () {
+            const stars = document.querySelectorAll("#ratingStars > .bi");
+            const ratingInput = document.getElementById("selectedRating");
+
+            stars.forEach(star => {
+                star.addEventListener("click", function () {
+                    const value = this.getAttribute("data-value");
+                    ratingInput.value = value;
+                    highlightStars(value);
+                });
+
+                star.addEventListener("mouseover", function () {
+                    const value = this.getAttribute("data-value");
+                    highlightStars(value);
+                });
+
+                star.addEventListener("mouseout", function () {
+                    const value = ratingInput.value;
+                    highlightStars(value);
+                });
+            });
+
+            function highlightStars(value) {
+                stars.forEach(star => {
+                    const starValue = star.getAttribute("data-value");
+                    if (starValue <= value) {
+                        star.classList.remove("bi-star");
+                        star.classList.add("bi-star-fill");
+                    } else {
+                        star.classList.remove("bi-star-fill");
+                        star.classList.add("bi-star");
+                    }
+                });
+            }
+        });
     </script>
+
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
 }

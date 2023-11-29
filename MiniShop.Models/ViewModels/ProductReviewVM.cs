@@ -1,4 +1,5 @@
-﻿using MiniShop.Models.Entity;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using MiniShop.Models.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,14 @@ namespace MiniShop.Models.ViewModels
 {
     public class ProductReviewVM
     {
-        public string Title { get; set; }   
+        [ValidateNever]
+        public ProductReview ProductReview { get; set; }
+        [ValidateNever]
         public List<ProductReview> ProductReviewsList { get; set; }
-
-        public string Review { get; set; }
-
+        [ValidateNever]
+        public string Title { get; set; }
+        public string ReviewText { get; set; }
+        [ValidateNever]
         public int ProductId { get; set; }
         public int Rating { get; set; }
 

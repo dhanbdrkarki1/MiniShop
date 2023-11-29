@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models;
@@ -16,6 +18,7 @@ namespace MiniShop.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+
         public ShoppingCartVM ShoppingCartVM { get; set; }
 
         public ProductVM ProductVM { get; set; }
@@ -23,6 +26,7 @@ namespace MiniShop.Areas.Customer.Controllers
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+
         }
 
         public IActionResult Index(int? subCategoryId, int page = 1, int pageSize = 6)
@@ -66,11 +70,12 @@ namespace MiniShop.Areas.Customer.Controllers
         public IActionResult Details(int productId)
         {
             var product = _unitOfWork.Product.Get(u => u.ProductId == productId, includeProperties: "Category");
-            var reviews = _unitOfWork.ProductReview.GetAll(r => r.ProductId == productId).ToList();
+            var reviews = _unitOfWork.ProductReview
+                .GetAll(r => r.ProductId == productId, includeProperties: "ApplicationUser").ToList();
 
             ProductReviewVM productReviewVM = new()
             {
-                Title = product.Name, 
+                Title = product.Name,
                 ProductReviewsList = reviews,
                 ProductId = productId
             };
@@ -83,12 +88,39 @@ namespace MiniShop.Areas.Customer.Controllers
 
             };
 
-            ProductVM productVM = new()
+            ProductVM productVM = new ProductVM();
+            if (User.Identity.IsAuthenticated)
             {
-                ShoppingCart = cart,
-                ProductReviewVM = productReviewVM
-            };
+
+                bool hasPurchasedProduct = CheckIfUserHasPurchasedProduct(productId);
+                if (hasPurchasedProduct)
+                {
+                    productVM.ShoppingCart = cart;
+                    productVM.ProductReviewVM = productReviewVM;
+                    productVM.HasPurchasedProduct = CheckIfUserHasPurchasedProduct(productId);
+                    return View(productVM);
+                }
+            }
+
+            productVM.ShoppingCart = cart;
+            productVM.ProductReviewVM = productReviewVM;
+            productVM.HasPurchasedProduct = false;
             return View(productVM);
+        }
+
+        // Check if the current user has purchased the product with the given ID
+        public bool CheckIfUserHasPurchasedProduct(int productId)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var currentUserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            bool hasPurchasedProduct = _unitOfWork.OrderItem
+                .GetAll(item => item.Order.ApplicationUserId == currentUserId &&
+                                item.Order.OrderStatus == "Delivered" &&
+                                item.ProductId == productId)
+                .Any();
+
+            return hasPurchasedProduct;
         }
 
         [HttpPost]
@@ -120,6 +152,8 @@ namespace MiniShop.Areas.Customer.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+
 
 
         // Add product to cart
@@ -161,10 +195,42 @@ namespace MiniShop.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
+
+
+
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult PostReview(ProductVM productVM)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            if (ModelState.IsValid)
+            {
+                var productReview = new ProductReview
+                {
+                    ApplicationUserId = userId,
+                    ProductId = productVM.ShoppingCart.ProductId,
+                    ReviewText = productVM.ProductReviewVM.ReviewText,
+                    Rating = productVM.ProductReviewVM.Rating,
+                    PublishedAt = DateTime.Now
+                };
+
+
+                _unitOfWork.ProductReview.Add(productReview);
+                _unitOfWork.Save();
+
+            }
+            return RedirectToAction(nameof(Details), new { productId = productVM.ShoppingCart.ProductId });
+        }
+
         [Authorize]
         public IActionResult BuyNow(int productId)
         {
-            return RedirectToAction("Checkout", "Cart", new { productId = productId});
+            return RedirectToAction("Checkout", "Cart", new { productId = productId });
         }
 
 

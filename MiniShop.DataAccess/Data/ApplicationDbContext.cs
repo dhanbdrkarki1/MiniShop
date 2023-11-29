@@ -30,6 +30,13 @@ namespace MiniShop.DataAccess.Data
                 .HasForeignKey(p => p.SubCategoryId)
                 .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete on Product -> SubCategory
 
+            modelBuilder.Entity<ProductReview>()
+                    .HasOne(p => p.ApplicationUser)
+                    .WithMany()
+                    .HasForeignKey(p => p.ApplicationUserId)
+                    .OnDelete(DeleteBehavior.Restrict); // Disable cascade delete on Product -> SubCategory
+
+
             base.OnModelCreating(modelBuilder);
 
         }
