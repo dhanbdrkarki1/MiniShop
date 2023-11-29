@@ -18,7 +18,6 @@ namespace MiniShop.Areas.Customer.Controllers
         private readonly IUnitOfWork _unitOfWork;
         public ShoppingCartVM ShoppingCartVM { get; set; }
 
-        [BindProperty]
         public ProductVM ProductVM { get; set; }
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
@@ -99,7 +98,7 @@ namespace MiniShop.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             productVM.ShoppingCart.ApplicationUserId = userId;
-
+            productVM.ShoppingCart.Product = null;
             ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == productVM.ShoppingCart.ProductId);
             if (cartFromDb != null)
             {

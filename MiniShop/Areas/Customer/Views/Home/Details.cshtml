@@ -3,7 +3,7 @@
 <div class="container">
 
     <form method="post" id="cart-form">
-        <input asp-for="ShoppingCart.Product.ProductId" hidden />
+        <input asp-for="ShoppingCart.ProductId" hidden />
         <div class="row">
             <div class="col-lg-6 mb-5 ftco-animate">
                 <a href="@Model.ShoppingCart.Product.ImageURL" class="image-popup prod-img-bg"><img src="@Model.ShoppingCart.Product.ImageURL" class="img-fluid" alt="@Model.ShoppingCart.Product.Name"></a>
@@ -52,7 +52,7 @@
                             </button>
                         </span>
 
-                        <input type="text" asp-for="ShoppingCart.Quantity" id="quantity" name="quantity" class="quantity form-control input-number" value="1" min="1" max="100">
+                        <input type="text" asp-for="ShoppingCart.Quantity" id="quantity" name="ShoppingCart.Quantity" class="quantity form-control input-number" value="1" min="1" max="100">
 
                         <span class="input-group-btn ml-2">
                             <button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
