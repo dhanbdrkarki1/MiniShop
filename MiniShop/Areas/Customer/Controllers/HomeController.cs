@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MiniShop.DataAccess.Repository;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models;
 using MiniShop.Models.Entity;
@@ -88,25 +89,68 @@ namespace MiniShop.Areas.Customer.Controllers
 
             };
 
+            // cacluating rating
+            decimal overallRating = CalculateOverallRating(reviews);
+
+            int unitsSold = CalculateTotalUnitsSold(productId);
+
             ProductVM productVM = new ProductVM();
+            productVM.ShoppingCart = cart;
+            productVM.ProductReviewVM = productReviewVM;
+            productVM.OverallRating = overallRating;
+            productVM.UnitSold = unitsSold;
+
             if (User.Identity.IsAuthenticated)
             {
 
                 bool hasPurchasedProduct = CheckIfUserHasPurchasedProduct(productId);
                 if (hasPurchasedProduct)
                 {
-                    productVM.ShoppingCart = cart;
-                    productVM.ProductReviewVM = productReviewVM;
+
                     productVM.HasPurchasedProduct = CheckIfUserHasPurchasedProduct(productId);
                     return View(productVM);
                 }
             }
 
-            productVM.ShoppingCart = cart;
-            productVM.ProductReviewVM = productReviewVM;
             productVM.HasPurchasedProduct = false;
             return View(productVM);
         }
+
+
+        //calculate the total units sold for a specific product based on delivered orders
+        public int CalculateTotalUnitsSold(int productId)
+        {
+            var deliveredOrderItems = _unitOfWork.OrderItem
+                .GetAll(oi => oi.Order.OrderStatus == "Delivered" && oi.ProductId == productId);
+
+            int totalUnitsSold = deliveredOrderItems.Sum(oi => oi.Quantity);
+
+            return totalUnitsSold;
+        }
+
+
+
+        // compute the average rating
+        public decimal CalculateOverallRating(List<ProductReview> reviews)
+        {
+            if (reviews == null || reviews.Count == 0)
+            {
+                return 0; // Return 0 if there are no reviews
+            }
+
+            decimal totalRating = 0;
+
+            foreach (var review in reviews)
+            {
+                totalRating += review.Rating;
+            }
+
+            decimal averageRating = totalRating / reviews.Count;
+
+            // Limit the precision to one decimal place
+            return Math.Round(averageRating, 1);
+        }
+
 
         // Check if the current user has purchased the product with the given ID
         public bool CheckIfUserHasPurchasedProduct(int productId)
@@ -117,8 +161,7 @@ namespace MiniShop.Areas.Customer.Controllers
             bool hasPurchasedProduct = _unitOfWork.OrderItem
                 .GetAll(item => item.Order.ApplicationUserId == currentUserId &&
                                 item.Order.OrderStatus == "Delivered" &&
-                                item.ProductId == productId)
-                .Any();
+                                item.ProductId == productId).Any();
 
             return hasPurchasedProduct;
         }

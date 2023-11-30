@@ -24,5 +24,11 @@ namespace MiniShop.Models.ViewModels
         [ValidateNever]
         public bool HasPurchasedProduct { get; set; }
 
+        [ValidateNever]
+        public decimal OverallRating { get; set; }
+
+        [ValidateNever]
+        public int UnitSold { get; set; } 
+
     }
 }
