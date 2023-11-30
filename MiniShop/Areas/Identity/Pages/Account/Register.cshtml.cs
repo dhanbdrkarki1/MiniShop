@@ -145,6 +145,8 @@ namespace MiniShop.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+
+            
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -173,6 +175,14 @@ namespace MiniShop.Areas.Identity.Pages.Account
                     else
                     {
                         await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                    }
+
+                    // if role is user redirect them to manage user page
+                    if (User.IsInRole(SD.Role_Admin))
+                    {
+                        returnUrl = Url.Content("~/Admin/User");
+                        return Redirect(returnUrl);
+
                     }
 
                     var userId = await _userManager.GetUserIdAsync(user);
