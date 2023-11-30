@@ -15,6 +15,7 @@ namespace MiniShop.Models.ViewModels
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; }
         public IEnumerable<SubCategory> SubCategoryList { get; set; }
+        public Dictionary<int, decimal> OverallRatings { get; set; }
 
         public PaginationInfo PaginationInfo { get; set; }
 

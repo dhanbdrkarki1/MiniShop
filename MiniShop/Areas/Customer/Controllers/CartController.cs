@@ -297,8 +297,6 @@ namespace MiniShop.Areas.Customer.Controllers
 
                     if (status == "Success" && orderObj != null)
                     {
-
-
                         //removing cart
                         var claimsIdentity = (ClaimsIdentity)User.Identity;
                         var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;

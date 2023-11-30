@@ -7,6 +7,7 @@ using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
 using MiniShop.Models.ViewModels;
 using MiniShop.Utility;
+using System.Security.Cryptography;
 
 namespace MiniShop.Areas.Admin.Controllers
 {
@@ -111,6 +112,22 @@ namespace MiniShop.Areas.Admin.Controllers
             orderFromDb.OrderStatus = OrderVM.Order.OrderStatus;
             orderFromDb.PaymentMethod = OrderVM.Order.PaymentMethod;
             _unitOfWork.Order.Update(orderFromDb);
+
+            if(OrderVM.Order.OrderStatus == "Delivered")
+            {
+                // updating the available quantity based on the quantity ordered
+                var orderedItems = _unitOfWork.OrderItem.GetAll(oi => oi.OrderId == OrderVM.Order.OrderId);
+                foreach (var orderedItem in orderedItems)
+                {
+                    var product = _unitOfWork.Product.Get(p => p.ProductId == orderedItem.ProductId);
+                    if (product != null)
+                    {
+                        product.StockQuantity -= orderedItem.Quantity;
+                        _unitOfWork.Product.Update(product);
+                    }
+                }
+            }
+
             _unitOfWork.Save();
 
             TempData["Success"] = "Order details updated successfully.";

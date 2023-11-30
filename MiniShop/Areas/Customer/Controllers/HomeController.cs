@@ -50,6 +50,14 @@ namespace MiniShop.Areas.Customer.Controllers
                 productCatalogVM.Products = _unitOfWork.Product.GetAll(u => u.SubCategoryId == subCategoryId).ToList();
             }
 
+            // Calculate OverallRating for each product
+            productCatalogVM.OverallRatings = new Dictionary<int, decimal>();
+            foreach (var product in productCatalogVM.Products)
+            {
+                decimal overallRating = CalculateOverallRatingForProduct(product); 
+                productCatalogVM.OverallRatings.Add(product.ProductId, overallRating); 
+            }
+
             int totalProducts = productCatalogVM.Products.Count();
 
             var paginatedProducts = productCatalogVM.Products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
@@ -66,7 +74,20 @@ namespace MiniShop.Areas.Customer.Controllers
             return View(productCatalogVM);
         }
 
+        private decimal CalculateOverallRatingForProduct(Product product)
+        {
+            var productReviews = _unitOfWork.ProductReview.GetAll(r => r.ProductId == product.ProductId);
 
+            if (productReviews.Any())
+            {
+                decimal totalRating = productReviews.Sum(r => r.Rating);
+                decimal averageRating = totalRating / productReviews.Count();
+
+                return averageRating;
+            }
+
+            return 0m;
+        }
 
         public IActionResult Details(int productId)
         {
@@ -76,9 +97,7 @@ namespace MiniShop.Areas.Customer.Controllers
 
             ProductReviewVM productReviewVM = new()
             {
-                Title = product.Name,
                 ProductReviewsList = reviews,
-                ProductId = productId
             };
 
             ShoppingCart cart = new()
@@ -90,7 +109,7 @@ namespace MiniShop.Areas.Customer.Controllers
             };
 
             // cacluating rating
-            decimal overallRating = CalculateOverallRating(reviews);
+            decimal overallRating = new Utils().CalculateOverallRating(reviews);
 
             int unitsSold = CalculateTotalUnitsSold(productId);
 
@@ -126,29 +145,6 @@ namespace MiniShop.Areas.Customer.Controllers
             int totalUnitsSold = deliveredOrderItems.Sum(oi => oi.Quantity);
 
             return totalUnitsSold;
-        }
-
-
-
-        // compute the average rating
-        public decimal CalculateOverallRating(List<ProductReview> reviews)
-        {
-            if (reviews == null || reviews.Count == 0)
-            {
-                return 0; // Return 0 if there are no reviews
-            }
-
-            decimal totalRating = 0;
-
-            foreach (var review in reviews)
-            {
-                totalRating += review.Rating;
-            }
-
-            decimal averageRating = totalRating / reviews.Count;
-
-            // Limit the precision to one decimal place
-            return Math.Round(averageRating, 1);
         }
 
 

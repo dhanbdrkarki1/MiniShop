@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.23" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiniShop.Models\MiniShop.Models.csproj" />
+  </ItemGroup>
+
 </Project>

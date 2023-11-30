@@ -1,6 +1,10 @@
 ﻿@model ProductVM
 @{
+    if (@Model.ShoppingCart.Product.Name != null)
+    {
     ViewData["Title"] = @Model.ShoppingCart.Product.Name;
+        
+    }
         int fullStars = (int)Model.OverallRating;
         bool hasHalfStar = (double)@Model.OverallRating - fullStars >= 0.5;
 }
@@ -17,6 +21,8 @@
                 <h3>@Model.ShoppingCart.Product.Name</h3>
 
                 <div class="rating d-flex">
+
+
                     <!-- Display the overall rating using stars -->
                     <p class="text-left mr-4">
 

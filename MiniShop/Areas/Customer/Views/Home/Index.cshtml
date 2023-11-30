@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home";
+
 }
 @model ProductCatalogVM
 
@@ -29,15 +30,33 @@
                                         <div class="cat">
                                             <span>@product.Category.Name</span>
                                         </div>
+
                                         <div class="rating">
-                                            <p class="text-right mb-0">
-                                                <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                                <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                            </p>
+                                            @{
+                                                decimal overallRating = Model.OverallRatings.ContainsKey(product.ProductId)
+                                                ? Model.OverallRatings[product.ProductId]
+                                                : 0m;
+                                            }
+
+                                            @for (int i = 0; i < 5; i++)
+                                            {
+                                                if ((int)overallRating > i)
+                                                {
+                                                    <a href="#"><i class="bi bi-star-fill"></i></a>
+                                                }
+                                                else if (overallRating - i >= 0.5m && overallRating - i < 1m)
+                                                {
+                                                    <a href="#"><i class="bi bi-star-half"></i></a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="#"><i class="bi bi-star"></i></a>
+                                                }
+                                            }
+
                                         </div>
+
+
                                     </div>
                                     <h3><a asp-action="Details" asp-route-productId="@product.ProductId" class="truncated-text" data-original-text="@product.Name">@product.Name</a></h3>
                                     <div class="pricing">
