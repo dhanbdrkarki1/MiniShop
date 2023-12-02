@@ -62,9 +62,16 @@ app.UseSession();
 
 // map routing to razor pages
 app.MapRazorPages();
+app.MapControllerRoute(
+	name: "admin",
+	pattern: "{area=Admin}/{controller=Home}/{action=Index}/{id?}");
+
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+	name: "default",
+	pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+
+
+
 
 app.Run();
