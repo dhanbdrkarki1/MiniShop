@@ -140,7 +140,7 @@ namespace MiniShop.Areas.Customer.Controllers
         public int CalculateTotalUnitsSold(int productId)
         {
             var deliveredOrderItems = _unitOfWork.OrderItem
-                .GetAll(oi => oi.Order.OrderStatus == "Delivered" && oi.ProductId == productId);
+                .GetAll(oi => oi.Order.OrderStatus == "Delivered" && oi.Order.PaymentStatus == "Approved" && oi.ProductId == productId);
 
             int totalUnitsSold = deliveredOrderItems.Sum(oi => oi.Quantity);
 
@@ -156,7 +156,7 @@ namespace MiniShop.Areas.Customer.Controllers
 
             bool hasPurchasedProduct = _unitOfWork.OrderItem
                 .GetAll(item => item.Order.ApplicationUserId == currentUserId &&
-                                item.Order.OrderStatus == "Delivered" &&
+                                item.Order.OrderStatus == "Delivered" && item.Order.PaymentStatus == "Approved" &&
                                 item.ProductId == productId).Any();
 
             return hasPurchasedProduct;
@@ -267,9 +267,9 @@ namespace MiniShop.Areas.Customer.Controllers
         }
 
         [Authorize]
-        public IActionResult BuyNow(int productId)
+        public IActionResult BuyNow(int productId, int quantity)
         {
-            return RedirectToAction("Checkout", "Cart", new { productId = productId });
+            return RedirectToAction("Checkout", "Cart", new { productId = productId, quantity=quantity });
         }
 
 

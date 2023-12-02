@@ -1,6 +1,8 @@
 ﻿@using MiniShop.Models.Entity
 @model Category
-
+@{
+    ViewData["Title"] = "Edit Category " + Model.Name;
+}
 <form method="post">
     <input asp-for="CategoryId" hidden />
     <div class="container">
@@ -16,7 +18,7 @@
             <label asp-for="Description"></label>
             <input asp-for="Description" class="form-control" />
         </div>
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-6">
                 <button type="submit" class="btn form-control btn-primary">Update Category</button>
             </div>

@@ -8,6 +8,7 @@ using MiniShop.Models.Entity;
 using MiniShop.Models.ViewModels;
 using MiniShop.Utility;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Xml;
 
 namespace MiniShop.Areas.Customer.Controllers
@@ -108,7 +109,7 @@ namespace MiniShop.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Checkout(int? productId)
+        public IActionResult Checkout(int? productId, int? quantity)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -144,8 +145,6 @@ namespace MiniShop.Areas.Customer.Controllers
             {
                 var product = _unitOfWork.Product.Get(u => u.ProductId == productId, includeProperties: "Category");
                 double price = (double)product.Price;
-                int quantity = 1;
-
                 if (product == null)
                 {
                     return NotFound();
@@ -166,7 +165,7 @@ namespace MiniShop.Areas.Customer.Controllers
                         PostalCode = user.PostalCode,
                     },
                 };
-                ShoppingCartVM.SubTotal = double.Parse(((double)price * quantity).ToString("0.00"));
+                ShoppingCartVM.SubTotal = double.Parse(((double)price * (int)quantity).ToString("0.00"));
 
 
                 var cartItem = new ShoppingCart
@@ -175,7 +174,7 @@ namespace MiniShop.Areas.Customer.Controllers
                     ApplicationUserId = userId,
                     ProductId = (int)productId,
                     Price = price,
-                    Quantity = quantity
+                    Quantity = (int)quantity
                 };
                 ((List<ShoppingCart>)ShoppingCartVM.ShoppingCartList).Add(cartItem);
             }
@@ -190,7 +189,7 @@ namespace MiniShop.Areas.Customer.Controllers
 
         [HttpPost]
         [ActionName("Checkout")]
-        public IActionResult CheckoutPOST(int? productId)
+        public IActionResult CheckoutPOST(int? productId, int? quantity)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -202,14 +201,30 @@ namespace MiniShop.Areas.Customer.Controllers
             ShoppingCartVM.Order.OrderDate = System.DateTime.Now;
             ShoppingCartVM.Order.ApplicationUserId = userId;
 
+            double productPrice = 0;
 
-            foreach (var cart in ShoppingCartVM.ShoppingCartList)
+            // setting cart access if it whether from buy now
+            if (productId != null)
             {
-                cart.Price = (double)cart.Product.Price;
-                // each product total
-                cart.Total = cart.Price * cart.Quantity;
-                ShoppingCartVM.SubTotal += (cart.Price * cart.Quantity);
+                productPrice = (double)_unitOfWork.Product.Get(u => u.ProductId == productId).Price;
+                ShoppingCartVM.SubTotal = (double)(productPrice * quantity);
+
+                HttpContext.Session.SetString("CartAccess", "Denied");
             }
+            else
+            {
+                foreach (var cart in ShoppingCartVM.ShoppingCartList)
+                {
+                    cart.Price = (double)cart.Product.Price;
+                    // each product total
+                    cart.Total = cart.Price * cart.Quantity;
+                    ShoppingCartVM.SubTotal += (cart.Price * cart.Quantity);
+                }
+
+
+                HttpContext.Session.SetString("CartAccess", "Allowed");
+            }
+
             double vatAmt = double.Parse(ShoppingCartVM.SubTotal.ToString("0.00")) * SD.VAT_Rate / 100;
             ShoppingCartVM.VATAmount = double.Parse(vatAmt.ToString("0.00"));
             //price after vat and delivery fee
@@ -223,38 +238,50 @@ namespace MiniShop.Areas.Customer.Controllers
             _unitOfWork.Save();
 
 
-            // saving order item
-            foreach (var cart in ShoppingCartVM.ShoppingCartList)
+            if(productId != null)
             {
                 OrderItem orderItem = new()
                 {
-                    ProductId = cart.ProductId,
+                    ProductId = (int)productId,
                     OrderId = ShoppingCartVM.Order.OrderId,
-                    Price = cart.Price,
-                    Quantity = cart.Quantity
+                    Price = productPrice,
+                    Quantity = (int)quantity
 
                 };
                 _unitOfWork.OrderItem.Add(orderItem);
-                _unitOfWork.Save();
-            }
-
-            if (ShoppingCartVM.Order.PaymentMethod == SD.Payment_Method_Esewa)
-            {
-                if(productId  != null)
-                {
-                    HttpContext.Session.SetString("CartAccess", "Denied");
-                }
-                else
-                {
-                    HttpContext.Session.SetString("CartAccess", "Allowed");
-
-                }
-                return RedirectToAction(nameof(ESewaRequest), new { order_id = ShoppingCartVM.Order.OrderId, order_total = ShoppingCartVM.Order.OrderTotal, sub_total = ShoppingCartVM.SubTotal, tax_amt = ShoppingCartVM.VATAmount });
             }
             else
             {
-                return RedirectToAction(nameof(OrderConfirmation), new { order_id = ShoppingCartVM.Order.OrderId });
+                // saving order item
+                foreach (var cart in ShoppingCartVM.ShoppingCartList)
+                {
+                    OrderItem orderItem = new()
+                    {
+                        ProductId = cart.ProductId,
+                        OrderId = ShoppingCartVM.Order.OrderId,
+                        Price = cart.Price,
+                        Quantity = cart.Quantity
+
+                    };
+                    _unitOfWork.OrderItem.Add(orderItem);
+                }
             }
+            _unitOfWork.Save();
+
+            if (ShoppingCartVM.Order.PaymentMethod == SD.Payment_Method_Esewa)
+            {
+
+                return RedirectToAction(nameof(ESewaRequest), new { order_id = ShoppingCartVM.Order.OrderId, order_total = ShoppingCartVM.Order.OrderTotal, sub_total = ShoppingCartVM.SubTotal, tax_amt = ShoppingCartVM.VATAmount });
+            }
+
+            //only empty card if request is not from add to cart not from buy now 
+            if (HttpContext.Session.GetString("CartAccess") == "Allowed")
+            {
+                var cartItemsToRemove = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId);
+                _unitOfWork.ShoppingCart.Remove(cartItemsToRemove);
+                HttpContext.Session.Clear();
+            }
+            return RedirectToAction(nameof(OrderConfirmation), new { order_id = ShoppingCartVM.Order.OrderId });
 
         }
 

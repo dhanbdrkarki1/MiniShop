@@ -21,7 +21,7 @@
                     {
                         <div class="col-sm-12 col-md-12 col-lg-4 ftco-animate d-flex">
                             <div class="product d-flex flex-column">
-                                <a asp-action="Details" asp-route-productId="@product.ProductId" class="img-prod">
+                                <a asp-action="Details" asp-route-productId="@product.ProductId"  class="img-prod">
                                     <img class="img-fluid" src="@product.ImageURL" alt="@product.Name">
                                     <div class="overlay"></div>
                                 </a>
@@ -68,7 +68,7 @@
                                                 Add to cart <i class="ion-ios-add ml-1"></i>
                                             </span>
                                         </a>
-                                        <a asp-area="Customer" asp-action="BuyNow" asp-route-productId="@product.ProductId" class="buy-now text-center py-2">
+                                        <a asp-area="Customer" asp-action="BuyNow" asp-route-productId="@product.ProductId" asp-route-quantity="1" class="buy-now text-center py-2">
                                             Buy now<span>
                                                 <i class="ion-ios-cart ml-1"></i>
                                             </span>

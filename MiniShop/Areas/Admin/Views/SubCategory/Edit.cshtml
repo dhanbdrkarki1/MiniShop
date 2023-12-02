@@ -1,6 +1,8 @@
 ﻿@using MiniShop.Models.Entity
 @model SubCategoryVM
-
+@{
+    ViewData["Title"] = "Edit " + Model.SubCategory.Name;
+}
 <form method="post">
     <input asp-for="SubCategory.SubCategoryId" hidden />
     <div class="container">
@@ -24,7 +26,7 @@
             </select>
             <span asp-validation-for="SubCategory.CategoryId" class="text-danger"></span>
         </div>
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-6">
                 <button type="submit" class="btn form-control btn-primary">Update Sub Category</button>
             </div>

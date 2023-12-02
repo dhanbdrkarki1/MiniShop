@@ -1,5 +1,9 @@
 ﻿@using MiniShop.Models.Entity;
 @model ProductVM;
+@{
+    ViewData["Title"] = "Add Product";
+
+}
 
 <form method="post" enctype="multipart/form-data">
     <input asp-for="Product.ProductId" hidden/>
@@ -65,7 +69,7 @@
                 </div>
             </div>
             <div class="col-2">
-                <img src="@Model.Product.ImageURL" width="100%"
+                <img src="@Model.Product.ImageURL"
                  style="border-radius:5px; border:1px solid #bbb9b9" />
             </div>
         </div>
@@ -97,7 +101,7 @@
                         value: '',
                         text: '--Select SubCategory--',
                         disabled: true,
-                        selected: true // Select this by default to prompt user selection
+                        selected: true
                     }));
 
                     // Add fetched subcategories

@@ -1,6 +1,8 @@
 ﻿@using MiniShop.Models.Entity;
 @model Category
-
+@{
+    ViewData["Title"] = "New Category";
+}
 <form method="post">
     <div class="container">
         <div class="row mb-3">
@@ -15,7 +17,7 @@
             <label asp-for="Description"></label>
             <input asp-for="Description" class="form-control" />
         </div>
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-6">
                 <button type="submit" class="btn form-control btn-primary">Create Category</button>
             </div>

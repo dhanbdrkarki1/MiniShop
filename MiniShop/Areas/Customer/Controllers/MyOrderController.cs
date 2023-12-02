@@ -34,7 +34,7 @@ namespace MiniShop.Areas.Admin.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            List<Order> objOrderList = _unitOfWork.Order.GetAll(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.Payment_Status_Approved, includeProperties: "ApplicationUser").ToList();
+            List<Order> objOrderList = _unitOfWork.Order.GetAll(u => u.ApplicationUserId == userId, includeProperties: "ApplicationUser").ToList();
             return Json(new { data = objOrderList });
         }
 
