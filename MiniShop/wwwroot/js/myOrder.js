@@ -22,7 +22,8 @@ function loadDataTable() {
                 },
                 "width": "20%"
             },
-        ]
+        ],
+        responsive: true
     });
 }
 

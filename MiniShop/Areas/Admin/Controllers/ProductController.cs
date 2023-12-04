@@ -167,6 +167,7 @@ namespace MiniShop.Areas.Admin.Controllers
                 System.IO.File.Delete(oldImagePath);
             }
             List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+
             _unitOfWork.Product.Remove(productToBeDeleted);
             _unitOfWork.Save();
             return Json(new { success = true, message = "Product " + productToBeDeleted.Name + " has been deleted successfully." });

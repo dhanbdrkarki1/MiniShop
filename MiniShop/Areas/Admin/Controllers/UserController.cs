@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MiniShop.DataAccess.Data;
+using MiniShop.DataAccess.Repository;
 using MiniShop.DataAccess.Repository.IRepository;
 using MiniShop.Models.Entity;
 using MiniShop.Models.ViewModels;
@@ -18,12 +19,13 @@ namespace MiniShop.Areas.Admin.Controllers
     public class UserController : Controller
     {
         //DEPENDENCY INJECTION
-        private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
-
-        public UserController(ApplicationDbContext db, UserManager<IdentityUser> userManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWork _unitOfWork;
+        public UserController(UserManager<IdentityUser> userManager, IUnitOfWork unitOfWork, RoleManager<IdentityRole> roleManager)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
+            _roleManager = roleManager;
             _userManager = userManager;
         }
 
@@ -34,48 +36,57 @@ namespace MiniShop.Areas.Admin.Controllers
 
         public IActionResult RoleManagement(string userId)
         {
-            string roleId = _db.UserRoles.FirstOrDefault(u => u.UserId == userId).RoleId;
+            if (userId == null || string.IsNullOrEmpty(userId))
+            {
+                return NotFound();
+            }
+
+            var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+            var userRoles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult();
+            var userRole = userRoles.FirstOrDefault();
+
             RoleManagementVM roleManagementVM = new RoleManagementVM()
             {
-                ApplicationUser = _db.ApplicationUsers.FirstOrDefault(u => u.Id == userId),
-                RoleList = _db.Roles.Select(i => new SelectListItem
+                ApplicationUser = user,
+                RoleList = _roleManager.Roles.Select(role => new SelectListItem
                 {
-                    Text = i.Name,
-                    Value = i.Id.ToString()
+                    Text = role.Name,
+                    Value = role.Name,
+                    Selected = (role.Name == userRole)
                 })
             };
-            roleManagementVM.ApplicationUser.Role = _db.Roles.FirstOrDefault(u => u.Id == roleId).Name;
+
             return View(roleManagementVM);
         }
 
         [HttpPost]
         public IActionResult RoleManagement(RoleManagementVM roleManagementVM)
         {
-            string roleId = _db.UserRoles.FirstOrDefault(u => u.UserId == roleManagementVM.ApplicationUser.Id).RoleId;
-            string oldRole = _db.Roles.FirstOrDefault(u => u.Id == roleId).Name;
+            var applicationUser = _userManager.FindByIdAsync(roleManagementVM.ApplicationUser.Id).GetAwaiter().GetResult();
+            var oldRoles = _userManager.GetRolesAsync(applicationUser).GetAwaiter().GetResult();
+            var oldRole = oldRoles.FirstOrDefault();
 
-            if (!(roleManagementVM.ApplicationUser.Role == oldRole))
+            if (roleManagementVM.ApplicationUser.Role != oldRole)
             {
-                ApplicationUser applicationUser = _db.ApplicationUsers.FirstOrDefault(u => u.Id == roleManagementVM.ApplicationUser.Id);
-                _userManager.RemoveFromRoleAsync(applicationUser,oldRole).GetAwaiter().GetResult();
+                _userManager.RemoveFromRolesAsync(applicationUser, oldRoles).GetAwaiter().GetResult();
                 _userManager.AddToRoleAsync(applicationUser, roleManagementVM.ApplicationUser.Role).GetAwaiter().GetResult();
             }
+
             return RedirectToAction("Index");
         }
+
+
 
 
         # region API Calls
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<ApplicationUser> objUserList = _db.ApplicationUsers.ToList();
-            var userRoles = _db.UserRoles.ToList();
-            var roles = _db.Roles.ToList();
+            List<ApplicationUser> objUserList = _unitOfWork.ApplicationUser.GetAll().ToList();
 
             foreach (var user in objUserList)
             {
-                var roleId = userRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId;
-                user.Role = roles.FirstOrDefault(u => u.Id == roleId).Name;
+                user.Role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
             }
 
             return Json(new { data = objUserList });
@@ -85,7 +96,8 @@ namespace MiniShop.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult LockUnlock([FromBody] string id)
         {
-            var objFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+            var objFromDb = _unitOfWork.ApplicationUser.Get(u => u.Id == id);
+
             if (objFromDb == null)
             {
                 return Json(new { success = false, message = "Error while locking/unlocking" });
@@ -99,7 +111,8 @@ namespace MiniShop.Areas.Admin.Controllers
             {
                 objFromDb.LockoutEnd = DateTime.Now.AddYears(50);
             }
-            _db.SaveChanges();
+            _unitOfWork.ApplicationUser.Update(objFromDb);
+            _unitOfWork.Save();
             return Json(new { success = true, message = "Operation successfull." });
         }
 

@@ -65,10 +65,20 @@ namespace MiniShop.DataAccess.Repository.IRepository
             return query.ToList();
         }
 
+
         public void Remove(T entity)
         {
-            dbSet.Remove(entity);
+            var local = dbSet.Local.FirstOrDefault(entry => entry.Equals(entity));
+            if (local != null)
+            {
+                _db.Entry(local).State = EntityState.Detached;
+            }
+            else
+            {
+                _db.Entry(entity).State = EntityState.Deleted;
+            }
         }
+
 
         public void RemoveRange(IEnumerable<T> entity)
         {

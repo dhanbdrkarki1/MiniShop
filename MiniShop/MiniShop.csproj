@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\lib\datatables\responsive.dataTables.min.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MiniShop.DataAccess\MiniShop.DataAccess.csproj" />
     <ProjectReference Include="..\MiniShop.Models\MiniShop.Models.csproj" />
   </ItemGroup>

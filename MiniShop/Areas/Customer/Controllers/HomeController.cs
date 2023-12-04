@@ -162,6 +162,12 @@ namespace MiniShop.Areas.Customer.Controllers
             return hasPurchasedProduct;
         }
 
+        public IActionResult SearchProduct(string? query)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+
         [HttpPost]
         [Authorize]
         public IActionResult Details(ProductVM productVM)

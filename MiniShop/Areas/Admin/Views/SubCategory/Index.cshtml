@@ -6,12 +6,13 @@
 <div class="container">
     <div class="row">
 
-        <div class="col-6">
-            <h2>Sub Category List</h2>
+        <div class="col-6 col-sm-12 col-md-6">
+            <h2>SubCategory List</h2>
         </div>
-        <div class="col-6 text-end">
-            <a asp-controller="SubCategory" asp-action="Create" class="btn bg-primary text-light">
-                <i class="bi bi-plus-circle-dotted"></i> New Sub Category
+
+        <div class="col-6 col-md-6 col-sm-12 mb-sm-2 text-sm-left text-md-right">
+            <a asp-controller="SubCategory" asp-action="Create" class="btn btn-primary text-light">
+                <i class="bi bi-plus-circle-dotted"></i> New SubCategory
             </a>
         </div>
 
@@ -23,7 +24,7 @@
         }
         else
         {
-            <table class="table">
+            <table class="table-light table-striped table-bordered table-hover table-responsive-sm table-responsive-lg table-responsive-md">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -31,7 +32,7 @@
                         <th>Description</th>
                         <th>Modified Date</th>
                         <th>Created Date</th>
-                        <th>Options</th>
+                        <th class="mr-3">Options</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,14 +44,17 @@
                             <td>@obj.Description</td>
                             <td>@obj.ModifiedDate</td>
                             <td>@obj.CreatedDate</td>
-                            <td>
+                            <td class="ml-4">
                                 <div class="row" role="group">
-                                    <a asp-controller="SubCategory" asp-action="Edit" asp-route-id="@obj.SubCategoryId" class="btn btn-primary">
-                                        Edit
-                                    </a>
-                                    <a asp-controller="SubCategory" asp-action="Delete" asp-route-id="@obj.SubCategoryId" class="btn btn-danger">
-                                        Delete
-                                    </a>
+                                    <div class="d-flex align-items-center p-3">
+                                        <a asp-controller="SubCategory" asp-action="Edit" asp-route-id="@obj.SubCategoryId" class="btn btn-warning ml-auto py-2">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-controller="SubCategory" asp-action="Delete" asp-route-id="@obj.SubCategoryId" class="btn btn-danger ml-auto py-2">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </div>
+
                                 </div>
                             </td>
                         </tr>

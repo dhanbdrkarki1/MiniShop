@@ -26,11 +26,10 @@
 
     <link rel="stylesheet" href="~/css/style.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" />
-    <link rel="stylesheet" href="~/lib/datatables/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="~/lib/sweetalert2/sweetalert2.all.min.css" />
-
-
-</head>
+    <link rel="stylesheet" href="~/lib/datatables/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables/responsive.dataTables.min.css" />
+    </head>
 <body class="goto-here">
     <div class="py-1 bg-black">
         <div class="container">
@@ -182,11 +181,7 @@
                                 <li><span class="icon icon-map-marker"></span><span class="text">Birendra Marg, Maitidevi Kathmandu</span></li>
                                 <li><a href="#"><span class="icon icon-phone"></span><span class="text">+977 9815042901</span></a></li>
                                 <li>
-                                    <a href="#">
-                                        <span class="icon icon-envelope"></span><a href="mailto:dhan.karki@study.lbef.edu.np">
-                                            <span class="text">dhan.karki@study.lbef.edu.np</span>
-                                        </a>
-                                    </a>
+                                        <span class="icon icon-envelope"></span> <span class="text">dhan.karki@study.lbef.edu.np</span>
                                 </li>
                             </ul>
                         </div>
@@ -197,7 +192,7 @@
                 <div class="col-md-12 text-center">
 
                     <p>
-                        Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+                        Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </p>
                 </div>
@@ -217,7 +212,6 @@
 
     <script src="https://cdn.tiny.cloud/1/2t7zl0pg9r4jl91858fywjsy1wp6vseqalos7qt0plqlnpnd/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
-    <script src="~/lib/datatables/jquery.dataTables.min.js" asp-append-version="true"></script>
 
     <script src="~/js/js/formatDateTime.js"></script>
 
@@ -232,10 +226,10 @@
     <script src="~/js/js/jquery.animateNumber.min.js"></script>
     <script src="~/js/js/bootstrap-datepicker.js"></script>
     <script src="~/js/js/scrollax.min.js"></script>
+    <script src="~/lib/datatables/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/datatables.responsive.min.js"></script>
     <script src="~/js/js/main.js"></script>
     <script src="~/js/js/custom.js"></script>
-
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

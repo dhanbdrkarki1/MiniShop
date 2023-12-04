@@ -118,9 +118,15 @@
                             </div>
                         </div>
                     </div>
+                    <p style="color: maroon; font-size: 14px;">
+                        Estimated Arrival Date:
+                        @DateTime.Now.AddDays(1).ToShortDateString() - @DateTime.Now.AddDays(7).ToShortDateString()
+                    </p>
                     <p><a id="place-order-btn" class="btn btn-primary py-3 px-4">Place an order</a></p>
                 </div>
             </div>
+
+
         </div>
     </div>
 </form>
