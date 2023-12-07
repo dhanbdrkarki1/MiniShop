@@ -100,15 +100,12 @@ namespace MiniShop.Areas.Admin.Controllers
                             System.IO.File.Delete(oldImagePath);
                         }
                     }
-
                     using (var fs = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
                     {
                         file.CopyTo(fs);
                     }
                     productVM.Product.ImageURL = @"\images\products\" + fileName;
                 }
-
-
                 if (productVM.Product.ProductId == 0)
                 {
                     productVM.Product.CreatedDate = DateTime.Now;
@@ -125,10 +122,7 @@ namespace MiniShop.Areas.Admin.Controllers
                     TempData["success"] = "Product updated successfully.";
 
                 }
-
-
                 _unitOfWork.Save();
-                
                 return RedirectToAction("Index");
             }
             else

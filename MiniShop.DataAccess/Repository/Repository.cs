@@ -68,15 +68,7 @@ namespace MiniShop.DataAccess.Repository.IRepository
 
         public void Remove(T entity)
         {
-            var local = dbSet.Local.FirstOrDefault(entry => entry.Equals(entity));
-            if (local != null)
-            {
-                _db.Entry(local).State = EntityState.Detached;
-            }
-            else
-            {
-                _db.Entry(entity).State = EntityState.Deleted;
-            }
+            dbSet.Remove(entity);
         }
 
 

@@ -64,7 +64,7 @@ app.UseSession();
 app.MapRazorPages();
 
 app.MapControllerRoute(
-	name: "default",
+	name: "customer",
 	pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 

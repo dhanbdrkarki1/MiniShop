@@ -42,14 +42,12 @@ namespace MiniShop.Areas.Customer.Controllers
                     }),
                 SubCategoryList = _unitOfWork.SubCategory.GetAll().ToList()
             };
-
             productCatalogVM.Products = _unitOfWork.Product.GetAll(includeProperties: "Category,SubCategory").ToList();
 
             if (subCategoryId != null)
             {
                 productCatalogVM.Products = _unitOfWork.Product.GetAll(u => u.SubCategoryId == subCategoryId).ToList();
             }
-
             // Calculate OverallRating for each product
             productCatalogVM.OverallRatings = new Dictionary<int, decimal>();
             foreach (var product in productCatalogVM.Products)
@@ -57,11 +55,8 @@ namespace MiniShop.Areas.Customer.Controllers
                 decimal overallRating = CalculateOverallRatingForProduct(product); 
                 productCatalogVM.OverallRatings.Add(product.ProductId, overallRating); 
             }
-
             int totalProducts = productCatalogVM.Products.Count();
-
             var paginatedProducts = productCatalogVM.Products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
             productCatalogVM.Products = paginatedProducts;
             productCatalogVM.PaginationInfo = new()
             {
@@ -70,7 +65,6 @@ namespace MiniShop.Areas.Customer.Controllers
                 TotalItems = totalProducts,
                 UrlParams = new Dictionary<string, string> { { "subCategoryId", subCategoryId.ToString() } }
             };
-
             return View(productCatalogVM);
         }
 

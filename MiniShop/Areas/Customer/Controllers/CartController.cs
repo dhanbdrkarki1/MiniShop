@@ -228,7 +228,7 @@ namespace MiniShop.Areas.Customer.Controllers
             double vatAmt = double.Parse(ShoppingCartVM.SubTotal.ToString("0.00")) * SD.VAT_Rate / 100;
             ShoppingCartVM.VATAmount = double.Parse(vatAmt.ToString("0.00"));
             //price after vat and delivery fee
-            ShoppingCartVM.Order.OrderTotal = ShoppingCartVM.SubTotal + ShoppingCartVM.VATAmount + SD.Delivery_Fee;
+            ShoppingCartVM.Order.OrderTotal = double.Parse((ShoppingCartVM.SubTotal + ShoppingCartVM.VATAmount + SD.Delivery_Fee).ToString("0.00"));
 
 
             ShoppingCartVM.Order.PaymentStatus = SD.Payment_Status_Pending;
